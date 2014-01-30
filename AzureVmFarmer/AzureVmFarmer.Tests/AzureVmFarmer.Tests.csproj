@@ -101,6 +101,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\AzureVmFarmer.Objects\AzureVmFarmer.Objects.csproj">
+      <Project>{12f0bfbe-ba09-45c6-874f-4b1d89dd9635}</Project>
+      <Name>AzureVmFarmer.Objects</Name>
+    </ProjectReference>
     <ProjectReference Include="..\AzureVmFarmer\AzureVmFarmer.csproj">
       <Project>{BD450850-794C-48F3-AA31-51750A057856}</Project>
       <Name>AzureVmFarmer</Name>

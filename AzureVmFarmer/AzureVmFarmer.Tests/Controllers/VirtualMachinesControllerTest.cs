@@ -1,7 +1,12 @@
-﻿using System.Linq;
+﻿using System.IO;
+using System.Linq;
 using System.Net;
+using System.Net.Http;
+using System.Threading;
+using AzureVmFarmer.Objects;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using AzureVmFarmer.Controllers;
+using Newtonsoft.Json;
 
 namespace AzureVmFarmer.Tests.Controllers
 {
@@ -13,6 +18,7 @@ namespace AzureVmFarmer.Tests.Controllers
 		{
 			// Arrange
 			var controller = new VirtualMachinesController();
+			controller.Post(new VirtualMachine {Name = "Machine1"});
 
 			// Act
 			var result = controller.Get();
@@ -20,7 +26,7 @@ namespace AzureVmFarmer.Tests.Controllers
 			// Assert
 			Assert.IsNotNull(result);
 			Assert.AreEqual(1, result.Count());
-			Assert.AreEqual("under construction", result.ElementAt(0));
+			Assert.AreEqual("Machine1", result.ElementAt(0).Name);
 		}
 
 		[TestMethod]
@@ -28,12 +34,19 @@ namespace AzureVmFarmer.Tests.Controllers
 		{
 			// Arrange
 			var controller = new VirtualMachinesController();
+			controller.Post(new VirtualMachine { Name = "Machine1" });
+			controller.Post(new VirtualMachine { Name = "Machine2" });
 
 			// Act
-			string result = controller.Get(5);
+			var response = controller.Get(2);
+			var task = response.Content.ReadAsAsync<VirtualMachine>();
+			while(task.IsCompleted == false)
+			{ Thread.Sleep(5);}
+			var result = task.Result;
 
 			// Assert
-			Assert.AreEqual("under construction", result);
+			Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
+			Assert.AreEqual("Machine2", result.Name);
 		}
 
 		[TestMethod]
@@ -43,7 +56,7 @@ namespace AzureVmFarmer.Tests.Controllers
 			var controller = new VirtualMachinesController();
 
 			// Act
-			var response = controller.Post("value");
+			var response = controller.Post(new VirtualMachine {Name = "Post Test"});
 
 			// Assert
 			Assert.AreEqual(HttpStatusCode.Accepted, response.StatusCode);
@@ -72,7 +85,7 @@ namespace AzureVmFarmer.Tests.Controllers
 			var result = controller.Delete(5);
 
 			// Assert
-			Assert.AreEqual(HttpStatusCode.Forbidden, result.StatusCode);
+			Assert.AreEqual(HttpStatusCode.NotFound, result.StatusCode);
 		}
 	}
 }

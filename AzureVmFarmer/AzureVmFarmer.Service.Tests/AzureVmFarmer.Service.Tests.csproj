@@ -9,8 +9,8 @@
     <ProjectGuid>{728374B3-675D-49B0-9D0E-6DFF36DE3FA7}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>AzureVmFarmer.Tests</RootNamespace>
-    <AssemblyName>AzureVmFarmer.Tests</AssemblyName>
+    <RootNamespace>AzureVmFarmer.Service.Tests</RootNamespace>
+    <AssemblyName>AzureVmFarmer.Service.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -35,6 +35,15 @@
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="nunit.framework">
+      <HintPath>..\packages\NUnit.2.6.3\lib\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="Rhino.Mocks">
+      <HintPath>..\packages\RhinoMocks.3.6.1\lib\net\Rhino.Mocks.dll</HintPath>
+    </Reference>
+    <Reference Include="StructureMap">
+      <HintPath>..\packages\structuremap.2.6.4.1\lib\net40\StructureMap.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
@@ -101,11 +110,15 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\AzureVmFarmer.Core\AzureVmFarmer.Core.csproj">
+      <Project>{1ef6ac93-96cf-42ab-a610-ff8a7e386796}</Project>
+      <Name>AzureVmFarmer.Core</Name>
+    </ProjectReference>
     <ProjectReference Include="..\AzureVmFarmer.Objects\AzureVmFarmer.Objects.csproj">
       <Project>{12f0bfbe-ba09-45c6-874f-4b1d89dd9635}</Project>
       <Name>AzureVmFarmer.Objects</Name>
     </ProjectReference>
-    <ProjectReference Include="..\AzureVmFarmer\AzureVmFarmer.csproj">
+    <ProjectReference Include="..\AzureVmFarmer.Service\AzureVmFarmer.Service.csproj">
       <Project>{BD450850-794C-48F3-AA31-51750A057856}</Project>
       <Name>AzureVmFarmer</Name>
     </ProjectReference>

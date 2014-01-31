@@ -7,9 +7,10 @@ using System.Linq;
 using System.Net.Http.Headers;
 using System.Web.Http;
 using System.Web.Http.Description;
-using AzureVmFarmer.Areas.HelpPage.Models;
+using AzureVmFarmer.Service.Areas.HelpPage.Models;
+using AzureVmFarmer.Service.Areas.HelpPage.SampleGeneration;
 
-namespace AzureVmFarmer.Areas.HelpPage
+namespace AzureVmFarmer.Service.Areas.HelpPage
 {
     public static class HelpPageConfigurationExtensions
     {

@@ -1,9 +1,9 @@
 using System;
 using System.Web.Http;
 using System.Web.Mvc;
-using AzureVmFarmer.Areas.HelpPage.Models;
+using AzureVmFarmer.Service.Areas.HelpPage.Models;
 
-namespace AzureVmFarmer.Areas.HelpPage.Controllers
+namespace AzureVmFarmer.Service.Areas.HelpPage.Controllers
 {
     /// <summary>
     /// The controller that will handle requests for the help page.

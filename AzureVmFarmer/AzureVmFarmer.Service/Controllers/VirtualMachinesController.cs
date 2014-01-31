@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Http;
@@ -19,7 +18,6 @@ namespace AzureVmFarmer.Service.Controllers
 			_messenger = messenger;
 		}
 
-		private static readonly IList<VirtualMachine> Machines = new List<VirtualMachine>(); 
 		public IQueryable<VirtualMachine> Get()
 		{
 			var result = _repository.Read().Take(25);

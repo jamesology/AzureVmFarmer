@@ -3,7 +3,7 @@ using System.Text;
 using System.Web;
 using System.Web.Http.Description;
 
-namespace AzureVmFarmer.Areas.HelpPage
+namespace AzureVmFarmer.Service.Areas.HelpPage
 {
     public static class ApiDescriptionExtensions
     {

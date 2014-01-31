@@ -40,7 +40,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Messengers\IMessenger.cs" />
+    <Compile Include="Messengers\Impl\Messenger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repositories\Impl\VirtualMachineRepository.cs" />
     <Compile Include="Repositories\IVirtualMachineRepository.cs" />
   </ItemGroup>
   <ItemGroup>

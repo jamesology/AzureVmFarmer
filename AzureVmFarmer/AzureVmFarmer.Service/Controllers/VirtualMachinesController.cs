@@ -1,9 +1,11 @@
+using System;
 using System.Linq;
 using System.Web;
 using System.Web.Http;
 using AzureVmFarmer.Core.Messengers;
 using AzureVmFarmer.Core.Repositories;
 using AzureVmFarmer.Objects;
+using StructureMap;
 
 namespace AzureVmFarmer.Service.Controllers
 {
@@ -12,10 +14,16 @@ namespace AzureVmFarmer.Service.Controllers
 		private readonly IVirtualMachineRepository _repository;
 		private readonly IMessenger _messenger;
 
+		public VirtualMachinesController() : this(ObjectFactory.GetInstance<IVirtualMachineRepository>(), ObjectFactory.GetInstance<IMessenger>())
+		{
+		}
+
 		public VirtualMachinesController(IVirtualMachineRepository repository, IMessenger messenger)
 		{
 			_repository = repository;
 			_messenger = messenger;
+
+			_repository.Create(new VirtualMachine {Name = "TESTER"});
 		}
 
 		public IQueryable<VirtualMachine> Get()

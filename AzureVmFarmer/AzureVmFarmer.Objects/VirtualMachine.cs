@@ -8,7 +8,16 @@ namespace AzureVmFarmer.Objects
 
 		public static bool IsValid(VirtualMachine virtualMachine)
 		{
-			var result = !String.IsNullOrWhiteSpace(virtualMachine.Name);
+			var result = true;
+
+			if (virtualMachine == null)
+			{
+				result = false;
+			}
+			else if (String.IsNullOrWhiteSpace(virtualMachine.Name))
+			{
+				result = false;
+			}
 
 			return result;
 		}

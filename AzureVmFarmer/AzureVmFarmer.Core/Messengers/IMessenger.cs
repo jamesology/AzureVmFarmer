@@ -4,6 +4,8 @@ namespace AzureVmFarmer.Core.Messengers
 {
 	public interface IMessenger
 	{
-		void QueueMessage();
+		void QueueCreateMessage(VirtualMachine virtualMachine);
+
+		void QueueDeleteMessage();
 	}
 }

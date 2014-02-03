@@ -109,30 +109,6 @@ namespace AzureVmFarmer.Service.Tests.Controllers
 		}
 
 		[Test]
-		public void Get_MessengerIsNotCalled()
-		{
-			// Arrange
-			var machineList = new VirtualMachine[0];
-
-			var repository = MockRepository.GenerateMock<IVirtualMachineRepository>();
-			repository.Expect(x => x.Read())
-				.Repeat.Once()
-				.Return(machineList.AsQueryable());
-
-			var messenger = MockRepository.GenerateStub<IMessenger>();
-			messenger.Expect(x => x.QueueMessage())
-				.Repeat.Never();
-
-			var controller = new VirtualMachinesController(repository, messenger);
-
-			// Act
-			controller.Get();
-
-			// Assert
-			messenger.VerifyAllExpectations();
-		}
-
-		[Test]
 		public void Get_HasVirtualMachines_ReturnsList()
 		{
 			// Arrange
@@ -239,35 +215,6 @@ namespace AzureVmFarmer.Service.Tests.Controllers
 
 			// Assert
 			repository.VerifyAllExpectations();
-		}
-
-		[Test]
-		public void GetByName_VirtualMachineExists_MessengerIsNotCalled()
-		{
-			// Arrange
-			var machineList = new[]
-			{
-				new VirtualMachine {Name = "Machine1"},
-				new VirtualMachine {Name = "Machine2"},
-				new VirtualMachine {Name = "Machine3"}
-			};
-
-			var repository = MockRepository.GenerateMock<IVirtualMachineRepository>();
-			repository.Expect(x => x.Read())
-				.Repeat.Once()
-				.Return(machineList.AsQueryable());
-
-			var messenger = MockRepository.GenerateMock<IMessenger>();
-			messenger.Expect(x => x.QueueMessage())
-				.Repeat.Never();
-
-			var controller = new VirtualMachinesController(repository, messenger);
-
-			// Act
-			controller.Get("Machine2");
-
-			// Assert
-			messenger.VerifyAllExpectations();
 		}
 
 		[Test]
@@ -403,7 +350,7 @@ namespace AzureVmFarmer.Service.Tests.Controllers
 				.Return(new EnumerableQuery<VirtualMachine>(Enumerable.Empty<VirtualMachine>()));
 
 			var messenger = MockRepository.GenerateMock<IMessenger>();
-			messenger.Expect(x => x.QueueMessage());
+			messenger.Expect(x => x.QueueCreateMessage(Arg<VirtualMachine>.Is.TypeOf));
 
 			var controller = new VirtualMachinesController(repository, messenger);
 
@@ -414,31 +361,6 @@ namespace AzureVmFarmer.Service.Tests.Controllers
 
 			// Act
 			controller.Post(machine);
-
-			// Assert
-			messenger.VerifyAllExpectations();
-		}
-
-		[Test]
-		public void Post_InvalidVirtualMachine_MessageIsNotSent()
-		{
-			// Arrange
-			var repository = MockRepository.GenerateStub<IVirtualMachineRepository>();
-
-			var messenger = MockRepository.GenerateMock<IMessenger>();
-			messenger.Expect(x => x.QueueMessage())
-				.Repeat.Never();
-
-			var controller = new VirtualMachinesController(repository, messenger);
-
-			var machine = new VirtualMachine();
-
-			// Act
-			try
-			{
-				controller.Post(machine);
-			}
-			catch(HttpException) {}
 
 			// Assert
 			messenger.VerifyAllExpectations();

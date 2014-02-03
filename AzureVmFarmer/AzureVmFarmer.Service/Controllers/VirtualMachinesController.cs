@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using System.Web;
 using System.Web.Http;
@@ -22,8 +21,6 @@ namespace AzureVmFarmer.Service.Controllers
 		{
 			_repository = repository;
 			_messenger = messenger;
-
-			_repository.Create(new VirtualMachine {Name = "TESTER"});
 		}
 
 		public IQueryable<VirtualMachine> Get()
@@ -53,7 +50,7 @@ namespace AzureVmFarmer.Service.Controllers
 			
 			_repository.Create(value);
 
-			_messenger.QueueMessage();
+			_messenger.QueueCreateMessage(value);
 
 			var result = value;
 
@@ -68,7 +65,7 @@ namespace AzureVmFarmer.Service.Controllers
 		public void Delete(string name)
 		{
 			_repository.Delete(name);
-			_messenger.QueueMessage();
+			_messenger.QueueDeleteMessage();
 		}
 	}
 }

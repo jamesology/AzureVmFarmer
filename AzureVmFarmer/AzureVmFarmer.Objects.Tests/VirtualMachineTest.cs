@@ -7,6 +7,12 @@ namespace AzureVmFarmer.Objects.Tests
 	public class VirtualMachineTest
 	{
 		[Test]
+		public void IsValid_ValueIsNull_ReturnsFalse()
+		{
+			Assert.That(VirtualMachine.IsValid(null), Is.False);
+		}
+
+		[Test]
 		public void IsValid_ValueMissingName_ReturnsFalse()
 		{
 			var value = new VirtualMachine {Name = String.Empty};

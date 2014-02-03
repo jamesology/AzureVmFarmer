@@ -35,7 +35,19 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.ServiceBus, Version=2.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\WindowsAzure.ServiceBus.2.2.4.0\lib\net40-full\Microsoft.ServiceBus.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.WindowsAzure.Configuration, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.WindowsAzure.ConfigurationManager.2.0.3\lib\net40\Microsoft.WindowsAzure.Configuration.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework">
+      <HintPath>..\packages\NUnit.2.6.3\lib\nunit.framework.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <Choose>
     <When Condition="('$(VisualStudioVersion)' == '10.0' or '$(VisualStudioVersion)' == '') and '$(TargetFrameworkVersion)' == 'v3.5'">
@@ -50,7 +62,24 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="Messengers\MessengerTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\AzureVmFarmer.Core\AzureVmFarmer.Core.csproj">
+      <Project>{1ef6ac93-96cf-42ab-a610-ff8a7e386796}</Project>
+      <Name>AzureVmFarmer.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\AzureVmFarmer.Objects\AzureVmFarmer.Objects.csproj">
+      <Project>{12f0bfbe-ba09-45c6-874f-4b1d89dd9635}</Project>
+      <Name>AzureVmFarmer.Objects</Name>
+    </ProjectReference>
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

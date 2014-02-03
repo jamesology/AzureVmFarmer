@@ -12,5 +12,12 @@ I am assuming you have the following:
 * Azure Account
 * Prepped Image uploaded to Azure
 * Any needed data disks in a storage account
+* Configured message queue for passing messages between the REST endpoints and the worker (defaults are fine)
 
 **Config Values**
+The config.sample has all the keys necessary for the system to work, you will just need to provide your own values. 
+
+Server:
+
+* ServiceBus.ConnectionString
+* QueueName

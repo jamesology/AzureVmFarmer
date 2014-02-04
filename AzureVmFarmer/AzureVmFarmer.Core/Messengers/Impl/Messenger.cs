@@ -49,8 +49,8 @@ namespace AzureVmFarmer.Core.Messengers.Impl
 		private static BrokeredMessage PrepareMessage(string messageType, VirtualMachine virtualMachine)
 		{
 			var message = new BrokeredMessage();
-			message.Properties["MessageType"] = messageType;
-			message.Properties["VirtualMachine.Name"] = virtualMachine.Name;
+			message.SetMessageType(messageType);
+			message.SetObject(virtualMachine);
 
 			return message;
 		}

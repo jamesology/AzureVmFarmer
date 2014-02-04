@@ -243,7 +243,16 @@ namespace AzureVmFarmer.Service.Tests.Controllers
 			var controller = new VirtualMachinesController(repository, messenger);
 
 			// Act
-			var result = controller.Post(new VirtualMachine{Name = "Machine"});
+			var virtualMachine = new VirtualMachine
+			{
+				Name = "Machine",
+				AdminPassword = "a;dkljh",
+				AdminUserName = "adjl",
+				Location = "a;sdgh;",
+				Size = "as;dklg",
+				TimeZone = "kl;agh;"
+			};
+			var result = controller.Post(virtualMachine);
 
 			// Assert
 			Assert.That(result.Name, Is.EqualTo("Machine"));
@@ -262,9 +271,18 @@ namespace AzureVmFarmer.Service.Tests.Controllers
 			var controller = new VirtualMachinesController(repository, messenger);
 
 			// Act
+			var virtualMachine = new VirtualMachine
+			{
+				Name = "Machine",
+				AdminPassword = "a;dkljh",
+				AdminUserName = "adjl",
+				Location = "a;sdgh;",
+				Size = "as;dklg",
+				TimeZone = "kl;agh;"
+			};
 
 			// Assert
-			Assert.That(() => controller.Post(new VirtualMachine {Name = "Machine"}), Throws.InstanceOf<HttpException>());
+			Assert.That(() => controller.Post(virtualMachine), Throws.InstanceOf<HttpException>());
 			repository.VerifyAllExpectations();
 		}
 
@@ -283,9 +301,18 @@ namespace AzureVmFarmer.Service.Tests.Controllers
 			var controller = new VirtualMachinesController(repository, messenger);
 
 			// Act
+			var virtualMachine = new VirtualMachine
+			{
+				Name = "Machine",
+				AdminPassword = "a;dkljh",
+				AdminUserName = "adjl",
+				Location = "a;sdgh;",
+				Size = "as;dklg",
+				TimeZone = "kl;agh;"
+			};
 
 			// Assert
-			Assert.That(() => controller.Post(new VirtualMachine { Name = "Machine" }), Throws.InstanceOf<HttpException>());
+			Assert.That(() => controller.Post(virtualMachine), Throws.InstanceOf<HttpException>());
 			repository.VerifyAllExpectations();
 		}
 
@@ -303,13 +330,18 @@ namespace AzureVmFarmer.Service.Tests.Controllers
 
 			var controller = new VirtualMachinesController(repository, messenger);
 
-			var machine = new VirtualMachine
+			var virtualMachine = new VirtualMachine
 			{
-				Name = "Post Test"
+				Name = "Machine",
+				AdminPassword = "a;dkljh",
+				AdminUserName = "adjl",
+				Location = "a;sdgh;",
+				Size = "as;dklg",
+				TimeZone = "kl;agh;"
 			};
 
 			// Act
-			controller.Post(machine);
+			controller.Post(virtualMachine);
 
 			// Assert
 			repository.VerifyAllExpectations();
@@ -354,13 +386,18 @@ namespace AzureVmFarmer.Service.Tests.Controllers
 
 			var controller = new VirtualMachinesController(repository, messenger);
 
-			var machine = new VirtualMachine
+			var virtualMachine = new VirtualMachine
 			{
-				Name = "Post Test"
+				Name = "Machine",
+				AdminPassword = "a;dkljh",
+				AdminUserName = "adjl",
+				Location = "a;sdgh;",
+				Size = "as;dklg",
+				TimeZone = "kl;agh;"
 			};
 
 			// Act
-			controller.Post(machine);
+			controller.Post(virtualMachine);
 
 			// Assert
 			messenger.VerifyAllExpectations();

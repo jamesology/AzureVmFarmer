@@ -62,7 +62,15 @@ namespace AzureVmFarmer.Core.Tests.Messengers
 		public void QueueCreateMessage_ValidVirtualMachine_QueuesMessage()
 		{
 			var messenger = new Messenger();
-			var virtualMachine = new VirtualMachine { Name = "Test" };
+			var virtualMachine = new VirtualMachine
+			{
+				Name = "Test",
+				AdminPassword = "a;dkljh",
+				AdminUserName = "adjl",
+				Location = "a;sdgh;",
+				Size = "as;dklg",
+				TimeZone = "kl;agh;"
+			};
 
 			messenger.QueueCreateMessage(virtualMachine);
 

@@ -1,11 +1,14 @@
 using System;
-using System.Net;
-using System.Security.Cryptography.X509Certificates;
+using System.Linq;
+using System.Management.Automation;
+using System.Management.Automation.Runspaces;
+using System.Reflection;
+using System.Runtime.ConstrainedExecution;
+using System.Threading;
+using AzureVmFarmer.Core.Commands;
 using AzureVmFarmer.Objects;
 using Microsoft.ServiceBus.Messaging;
-using Microsoft.WindowsAzure;
-using Microsoft.WindowsAzure.Management.Compute;
-using Microsoft.WindowsAzure.Management.Compute.Models;
+using Microsoft.WindowsAzure.Storage.Blob;
 
 namespace AzureVmFarmer.Core.Messengers.Impl
 {
@@ -13,86 +16,244 @@ namespace AzureVmFarmer.Core.Messengers.Impl
 	{
 		public void HandleMessage(BrokeredMessage message)
 		{
-			var subscriptionId = CloudConfigurationManager.GetSetting("Azure.SubscriptionId");
-			var managementCertificateString = CloudConfigurationManager.GetSetting("Azure.ManagementCertificate");
-			var managementCertificate = new X509Certificate2(Convert.FromBase64String(managementCertificateString));
-			var credentials = new CertificateCloudCredentials(subscriptionId, managementCertificate);
-
-			using (var manager = CloudContext.Clients.CreateComputeManagementClient(credentials))
+			using (var runspace = RunspaceFactory.CreateRunspace())
 			{
+				runspace.Open();
+
 				var virtualMachine = message.GetObject<VirtualMachine>();
+				var imageName = "NuMatsRunnerBase"; //TODO: Get from somewhere.
 
-				//TODO: find a subscription
+				//var subscriptionId = CloudConfigurationManager.GetSetting("Azure.SubscriptionId");
+				//var managementCertificateString = CloudConfigurationManager.GetSetting("Azure.ManagementCertificate");
+				//var managementCertificate = new X509Certificate2(Convert.FromBase64String(managementCertificateString));
+				//var credentials = new CertificateCloudCredentials(subscriptionId, managementCertificate);
 
-				//TODO: get storage account
+				//TODO: find a subscription?
 
-				//TODO: generate credentials
+				//TODO: get storage account?
 
-				DeleteExistingMachine(manager, virtualMachine.Name);
+				DeleteExistingArtifacts(runspace, virtualMachine);
 
-				var serviceCreateStatus = CreateService(manager, virtualMachine.Name, virtualMachine.Location);
-
-				var createStatus = CreateVirtualMachine(manager, virtualMachine);
+				CreateNewVirtualMachine(runspace, virtualMachine, imageName);
 
 				//TODO: attach disk?
+
+				runspace.Close();
 			}
 		}
 
-		private static void DeleteExistingMachine(IComputeManagementClient manager, string virtualMachineName)
+		private static void DeleteExistingArtifacts(Runspace runspace, VirtualMachine virtualMachine)
 		{
-			var getStatus = manager.VirtualMachines.Get(virtualMachineName, virtualMachineName, virtualMachineName);
-
-			if (getStatus.StatusCode == HttpStatusCode.OK)
+			if (AzureServiceExists(runspace, virtualMachine) || AzureVmExists(runspace, virtualMachine))
 			{
-				manager.HostedServices.Delete(virtualMachineName);
+				DeleteExistingService(runspace, virtualMachine);
 			}
 		}
 
-		private static OperationResponse CreateService(IComputeManagementClient manager, string serviceName, string location)
+		private static bool AzureServiceExists(Runspace runspace, VirtualMachine virtualMachine)
 		{
-			var serviceParameters = new HostedServiceCreateParameters
+			bool result;
+
+			using (var pipeline = runspace.CreatePipeline())
 			{
-				Label = serviceName,
-				Location = location,
-				ServiceName = serviceName,
-			};
-
-			var serviceCreateStatus = manager.HostedServices.Create(serviceParameters);
-
-			return serviceCreateStatus;
-		}
-
-		private static ComputeOperationStatusResponse CreateVirtualMachine(IComputeManagementClient manager, VirtualMachine virtualMachine)
-		{
-			var configurations = new[]
-			{
-				new ConfigurationSet
+				var getAzureServiceCommand = new GetAzureServiceCommand
 				{
+					ServiceName = virtualMachine.Name
+				};
+
+				pipeline.Commands.Add(getAzureServiceCommand);
+
+				var results = pipeline.Execute();
+
+				result = results.Any();
+			}
+
+			return result;
+		}
+
+		private static bool AzureVmExists(Runspace runspace, VirtualMachine virtualMachine)
+		{
+			bool result;
+
+			using (var pipeline = runspace.CreatePipeline())
+			{
+				var getAzureVmCommand = new GetAzureVmCommand
+				{
+					Name = virtualMachine.Name
+				};
+
+				pipeline.Commands.Add(getAzureVmCommand);
+
+				var results = pipeline.Execute();
+
+				result = results.Any();
+			}
+
+			return result;
+		}
+
+		private static void DeleteExistingService(Runspace runspace, VirtualMachine virtualMachine)
+		{
+			using (var pipeline = runspace.CreatePipeline())
+			{
+				var removeAzureServiceCommand = new RemoveAzureServiceCommand
+				{
+					ServiceName = virtualMachine.Name,
+					Force = true,
+					DeleteAll = true
+				};
+
+				pipeline.Commands.Add(removeAzureServiceCommand);
+
+				pipeline.Execute();
+			}
+		}
+
+		private static void CreateNewVirtualMachine(Runspace runspace, VirtualMachine virtualMachine, string imageName)
+		{
+			PrepareAzureDrive(runspace, virtualMachine);
+
+			ProvisionVirtualMachine(runspace, virtualMachine, imageName);
+
+			AttachAzureDrive(runspace, virtualMachine);
+		}
+
+		private static void PrepareAzureDrive(Runspace runspace, VirtualMachine virtualMachine)
+		{
+			CopyVirtualHardDrive(runspace, virtualMachine);
+
+			CreateDisk(runspace, virtualMachine);
+		}
+
+		private static void ProvisionVirtualMachine(Runspace runspace, VirtualMachine virtualMachine, string imageName)
+		{
+			using (var pipeline = runspace.CreatePipeline())
+			{
+				var newAzureVmConfigCommand = new NewAzureVmConfigCommand
+				{
+					Name = virtualMachine.Name,
+					ImageName = imageName,
+					InstanceSize = virtualMachine.Size
+				};
+
+				var addAzureProvisioningConfigCommand = new AddAzureProvisioningConfigCommand
+				{
+					Windows = true,
 					AdminPassword = virtualMachine.AdminPassword,
-					AdminUserName = virtualMachine.AdminUserName,
-					ComputerName = virtualMachine.Name,
-					ConfigurationSetType = "Windows",
+					AdminUsername = virtualMachine.AdminUserName,
 					TimeZone = virtualMachine.TimeZone
+				};
+
+				var newAzureVmCommand = new NewAzureVmCommand
+				{
+					Location = virtualMachine.Location,
+					ServiceName = virtualMachine.Name,
+					WaitForBoot = false
+				};
+
+				pipeline.Commands.Add(newAzureVmConfigCommand);
+				pipeline.Commands.Add(addAzureProvisioningConfigCommand);
+				pipeline.Commands.Add(newAzureVmCommand);
+
+				var results = pipeline.Execute();
+			}
+		}
+
+		private static void AttachAzureDrive(Runspace runspace, VirtualMachine virtualMachine)
+		{
+			using (var pipeline = runspace.CreatePipeline())
+			{
+				var getAzureVm = new GetAzureVmCommand
+				{
+					Name = virtualMachine.Name,
+					ServiceName = virtualMachine.Name
+				};
+
+				var addAzureDataDisk = new AddAzureDataDiskCommand
+				{
+					Import = true,
+					DiskName = String.Format("AzureTest-{0}", virtualMachine.Name), //TODO: Get from somewhere
+					LogicalUnitNumber = 0
+				};
+
+				var updateAzureVm = new UpdateAzureVmCommand();
+
+				pipeline.Commands.Add(getAzureVm);
+				pipeline.Commands.Add(addAzureDataDisk);
+				pipeline.Commands.Add(updateAzureVm);
+
+				var result = pipeline.Execute();
+			}
+		}
+
+		private static void CopyVirtualHardDrive(Runspace runspace, VirtualMachine virtualMachine)
+		{
+			using (var pipeline = runspace.CreatePipeline())
+			{
+				var azureStorageBlobCopyCommand = new StartAzureStorageBlobCopyCommand
+				{
+					SrcBlob = "AzureTest.vhd", //TODO: pass this in
+					SrcContainer = "vhds", //TODO: ditto
+					DestContainer = "vhds", //TODO: double ditto
+					DestBlob = String.Format("AzureTest-{0}.vhd", virtualMachine.Name),
+					Force = true
+				};
+
+				pipeline.Commands.Add(azureStorageBlobCopyCommand);
+
+				var results = pipeline.Execute();
+
+				using (var statusPipeline = runspace.CreatePipeline())
+				{
+					var copyPending = false;
+
+					var getAzureStorageBlobCopyStateCommand = new GetAzureStorageBlobCopyStateCommand();
+
+					do
+					{
+						statusPipeline.Commands.Add(getAzureStorageBlobCopyStateCommand);
+
+						var copyResult = statusPipeline.Execute(results)
+							.Cast<PSObject>()
+							.Select(x => x.BaseObject)
+							.FirstOrDefault();
+
+						if (copyResult != null)
+						{
+							var type = copyResult.GetType();
+
+							var property = type.GetProperty("Status", BindingFlags.Instance | BindingFlags.Public);
+
+							var value = String.Format("{0}", property.GetValue(copyResult));
+
+							copyPending = value == "Pending";
+						}
+
+						if (copyPending)
+						{
+							Thread.Sleep(10);
+						}
+					} while (copyPending);
 				}
-			};
+			}
+		}
 
-			var osDrive = new OSVirtualHardDisk
+		private static void CreateDisk(Runspace runspace, VirtualMachine virtualMachine)
+		{
+			using (var pipeline = runspace.CreatePipeline())
 			{
-				SourceImageName = "NuMatsRunnerBase"
-			};
+				var addAzureDiskCommand = new AddAzureDiskCommand
+				{
+					DiskName = String.Format("AzureTest-{0}", virtualMachine.Name), //TODO: you know the drill
+					Label = "AzureTest", //TODO: yup
+					MediaLocation = String.Format("http://numats.blob.core.windows.net/vhds/AzureTest-{0}.vhd", virtualMachine.Name)
+					//TODO: for serious
+				};
 
-			var vmParameters = new VirtualMachineCreateParameters
-			{
-				//TODO: Add data virtual hard disks
-				ConfigurationSets = configurations,
-				RoleName = virtualMachine.Name,
-				RoleSize = virtualMachine.Size,
-				OSVirtualHardDisk = osDrive
-			};
+				pipeline.Commands.Add(addAzureDiskCommand);
 
-			var createStatus = manager.VirtualMachines.Create(virtualMachine.Name, virtualMachine.Name, vmParameters);
-
-			return createStatus;
+				var results = pipeline.Execute();
+			}
 		}
 	}
 }

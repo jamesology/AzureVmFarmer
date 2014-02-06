@@ -13,8 +13,9 @@ namespace AzureVmFarmer.Core.Messengers.Impl
 			QueueMessage("Create", virtualMachine);
 		}
 
-		public void QueueDeleteMessage()
+		public void QueueDeleteMessage(VirtualMachine virtualMachine)
 		{
+			QueueMessage("Delete", virtualMachine);
 		}
 
 		private static void QueueMessage(string messageType, VirtualMachine virtualMachine)

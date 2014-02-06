@@ -3,12 +3,10 @@ using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
 using System.Reflection;
-using System.Runtime.ConstrainedExecution;
 using System.Threading;
 using AzureVmFarmer.Core.Commands;
 using AzureVmFarmer.Objects;
 using Microsoft.ServiceBus.Messaging;
-using Microsoft.WindowsAzure.Storage.Blob;
 
 namespace AzureVmFarmer.Core.Messengers.Impl
 {
@@ -32,43 +30,15 @@ namespace AzureVmFarmer.Core.Messengers.Impl
 
 				//TODO: get storage account?
 
-				DeleteExistingArtifacts(runspace, virtualMachine);
-
-				CreateNewVirtualMachine(runspace, virtualMachine, imageName);
+				if (AzureVmExists(runspace, virtualMachine) == false)
+				{
+					CreateNewVirtualMachine(runspace, virtualMachine, imageName);
+				}
 
 				//TODO: attach disk?
 
 				runspace.Close();
 			}
-		}
-
-		private static void DeleteExistingArtifacts(Runspace runspace, VirtualMachine virtualMachine)
-		{
-			if (AzureServiceExists(runspace, virtualMachine) || AzureVmExists(runspace, virtualMachine))
-			{
-				DeleteExistingService(runspace, virtualMachine);
-			}
-		}
-
-		private static bool AzureServiceExists(Runspace runspace, VirtualMachine virtualMachine)
-		{
-			bool result;
-
-			using (var pipeline = runspace.CreatePipeline())
-			{
-				var getAzureServiceCommand = new GetAzureServiceCommand
-				{
-					ServiceName = virtualMachine.Name
-				};
-
-				pipeline.Commands.Add(getAzureServiceCommand);
-
-				var results = pipeline.Execute();
-
-				result = results.Any();
-			}
-
-			return result;
 		}
 
 		private static bool AzureVmExists(Runspace runspace, VirtualMachine virtualMachine)
@@ -90,23 +60,6 @@ namespace AzureVmFarmer.Core.Messengers.Impl
 			}
 
 			return result;
-		}
-
-		private static void DeleteExistingService(Runspace runspace, VirtualMachine virtualMachine)
-		{
-			using (var pipeline = runspace.CreatePipeline())
-			{
-				var removeAzureServiceCommand = new RemoveAzureServiceCommand
-				{
-					ServiceName = virtualMachine.Name,
-					Force = true,
-					DeleteAll = true
-				};
-
-				pipeline.Commands.Add(removeAzureServiceCommand);
-
-				pipeline.Execute();
-			}
 		}
 
 		private static void CreateNewVirtualMachine(Runspace runspace, VirtualMachine virtualMachine, string imageName)

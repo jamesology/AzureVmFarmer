@@ -12,7 +12,8 @@ namespace AzureVmFarmer.Core.Messengers.Impl
 		{
 			_handlers = new Dictionary<string, IMessageHandler>
 			{
-				{"Create", new SowMessageHandler()}
+				{"Create", new SowMessageHandler()},
+				{"Delete", new ReapMessageHandler()}
 			};
 		}
 

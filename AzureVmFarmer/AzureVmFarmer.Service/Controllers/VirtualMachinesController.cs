@@ -64,8 +64,18 @@ namespace AzureVmFarmer.Service.Controllers
 
 		public void Delete(string name)
 		{
+			var virtualMachine = new VirtualMachine
+			{
+				AdminPassword = ".",
+				AdminUserName = ".",
+				Location = ".",
+				Name = name,
+				Size = ".",
+				TimeZone = "."
+			}; //TODO: This feels hacky
+
 			_repository.Delete(name);
-			_messenger.QueueDeleteMessage();
+			_messenger.QueueDeleteMessage(virtualMachine);
 		}
 	}
 }

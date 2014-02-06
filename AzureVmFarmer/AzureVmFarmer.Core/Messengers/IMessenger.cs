@@ -6,6 +6,6 @@ namespace AzureVmFarmer.Core.Messengers
 	{
 		void QueueCreateMessage(VirtualMachine virtualMachine);
 
-		void QueueDeleteMessage();
+		void QueueDeleteMessage(VirtualMachine virtualMachine);
 	}
 }

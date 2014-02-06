@@ -19,8 +19,6 @@ namespace AzureVmFarmer.Core.Commands
 				result.Parameters.Add(ServiceNameParameter, ServiceName);
 			}
 
-			result.Parameters.Add("ErrorAction", "Ignore");
-
 			return result;
 		}
 	}

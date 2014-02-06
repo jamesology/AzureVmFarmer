@@ -7,6 +7,7 @@ using System.Threading;
 using AzureVmFarmer.Core.Commands;
 using AzureVmFarmer.Objects;
 using Microsoft.ServiceBus.Messaging;
+using Microsoft.WindowsAzure;
 
 namespace AzureVmFarmer.Core.Messengers.Impl
 {
@@ -19,7 +20,7 @@ namespace AzureVmFarmer.Core.Messengers.Impl
 				runspace.Open();
 
 				var virtualMachine = message.GetObject<VirtualMachine>();
-				var imageName = "NuMatsRunnerBase"; //TODO: Get from somewhere.
+				var imageName = CloudConfigurationManager.GetSetting("VirtualMachineBaseImageName");
 
 				//var subscriptionId = CloudConfigurationManager.GetSetting("Azure.SubscriptionId");
 				//var managementCertificateString = CloudConfigurationManager.GetSetting("Azure.ManagementCertificate");

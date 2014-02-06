@@ -36,12 +36,12 @@ namespace AzureVmFarmer.Core.Commands
 				result.Parameters.Add(VerboseParameter);
 			}
 
-			if (String.IsNullOrWhiteSpace(command.ErrorAction))
+			if (String.IsNullOrWhiteSpace(command.ErrorAction) == false)
 			{
 				result.Parameters.Add(ErrorActionParameter, command.ErrorAction);
 			}
 
-			if (String.IsNullOrWhiteSpace(command.ErrorVariable))
+			if (String.IsNullOrWhiteSpace(command.ErrorVariable) == false)
 			{
 				result.Parameters.Add(ErrorVariableParameter, command.ErrorVariable);
 			}

@@ -74,7 +74,7 @@ namespace AzureVmFarmer.Core.Tests.Messengers
 
 			messenger.QueueCreateMessage(virtualMachine);
 
-			//TODO: Verify message on test queue
+			//Verify message on test queue
 			var result = RetrieveQueuedMessage();
 
 			Assert.That(result, Is.Not.Null);

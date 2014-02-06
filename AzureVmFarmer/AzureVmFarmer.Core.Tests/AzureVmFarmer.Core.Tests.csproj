@@ -62,7 +62,21 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="Commands\AddAzureDataDiskCommandTests.cs" />
+    <Compile Include="Commands\AddAzureDiskCommandTests.cs" />
+    <Compile Include="Commands\AddAzureProvisioningConfigCommandTests.cs" />
+    <Compile Include="Commands\GetAzureServiceCommandTests.cs" />
+    <Compile Include="Commands\GetAzureVmCommandTests.cs" />
+    <Compile Include="Commands\NewAzureVmCommandTests.cs" />
+    <Compile Include="Commands\NewAzureVmConfigCommandTests.cs" />
+    <Compile Include="Commands\PowerShellCommandTests.cs" />
+    <Compile Include="Commands\RemoveAzureServiceCommandTests.cs" />
+    <Compile Include="Commands\StartAzureStorageBlobCopyCommandTests.cs" />
+    <Compile Include="Commands\UpdateAzureVmCommandTests.cs" />
+    <Compile Include="Messengers\MessageHandlerTests.cs" />
     <Compile Include="Messengers\MessengerTest.cs" />
+    <Compile Include="Messengers\ReapMessageHandlerTests.cs" />
+    <Compile Include="Messengers\SowMessageHandlerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="BrokeredMessageExtensionTests.cs" />
   </ItemGroup>

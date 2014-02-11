@@ -21,6 +21,9 @@ namespace AzureVmFarmer.Core.Messengers.Impl
 
 				var virtualMachine = message.GetObject<VirtualMachine>();
 				var imageName = CloudConfigurationManager.GetSetting("VirtualMachineBaseImageName");
+				var dataDiskBase = CloudConfigurationManager.GetSetting("DataDiskName");
+				var dataDiskName = String.Format("{0}-{1}", dataDiskBase, virtualMachine.Name);
+				var sourceVhdName = String.Format("{0}.vhd", dataDiskBase);
 
 				//var subscriptionId = CloudConfigurationManager.GetSetting("Azure.SubscriptionId");
 				//var managementCertificateString = CloudConfigurationManager.GetSetting("Azure.ManagementCertificate");
@@ -33,7 +36,7 @@ namespace AzureVmFarmer.Core.Messengers.Impl
 
 				if (AzureVmExists(runspace, virtualMachine) == false)
 				{
-					CreateNewVirtualMachine(runspace, virtualMachine, imageName);
+					CreateNewVirtualMachine(runspace, virtualMachine, imageName, dataDiskName, sourceVhdName);
 				}
 
 				//TODO: attach disk?
@@ -63,20 +66,20 @@ namespace AzureVmFarmer.Core.Messengers.Impl
 			return result;
 		}
 
-		private static void CreateNewVirtualMachine(Runspace runspace, VirtualMachine virtualMachine, string imageName)
+		private static void CreateNewVirtualMachine(Runspace runspace, VirtualMachine virtualMachine, string imageName, string dataDiskName, string sourceVhdName)
 		{
-			PrepareAzureDrive(runspace, virtualMachine);
+			PrepareAzureDrive(runspace, virtualMachine, dataDiskName, sourceVhdName);
 
 			ProvisionVirtualMachine(runspace, virtualMachine, imageName);
 
-			AttachAzureDrive(runspace, virtualMachine);
+			AttachAzureDrive(runspace, virtualMachine, dataDiskName);
 		}
 
-		private static void PrepareAzureDrive(Runspace runspace, VirtualMachine virtualMachine)
+		private static void PrepareAzureDrive(Runspace runspace, VirtualMachine virtualMachine, string dataDiskName, string sourceVhdName)
 		{
-			CopyVirtualHardDrive(runspace, virtualMachine);
+			CopyVirtualHardDrive(runspace, virtualMachine, dataDiskName, sourceVhdName);
 
-			CreateDisk(runspace, virtualMachine);
+			CreateDisk(runspace, virtualMachine, dataDiskName);
 		}
 
 		private static void ProvisionVirtualMachine(Runspace runspace, VirtualMachine virtualMachine, string imageName)
@@ -113,7 +116,7 @@ namespace AzureVmFarmer.Core.Messengers.Impl
 			}
 		}
 
-		private static void AttachAzureDrive(Runspace runspace, VirtualMachine virtualMachine)
+		private static void AttachAzureDrive(Runspace runspace, VirtualMachine virtualMachine, string dataDiskName)
 		{
 			using (var pipeline = runspace.CreatePipeline())
 			{
@@ -126,7 +129,7 @@ namespace AzureVmFarmer.Core.Messengers.Impl
 				var addAzureDataDisk = new AddAzureDataDiskCommand
 				{
 					Import = true,
-					DiskName = String.Format("AzureTest-{0}", virtualMachine.Name), //TODO: Get from somewhere
+					DiskName = dataDiskName,
 					LogicalUnitNumber = 0
 				};
 
@@ -140,16 +143,16 @@ namespace AzureVmFarmer.Core.Messengers.Impl
 			}
 		}
 
-		private static void CopyVirtualHardDrive(Runspace runspace, VirtualMachine virtualMachine)
+		private static void CopyVirtualHardDrive(Runspace runspace, VirtualMachine virtualMachine, string dataDiskName, string sourceVhdName)
 		{
 			using (var pipeline = runspace.CreatePipeline())
 			{
 				var azureStorageBlobCopyCommand = new StartAzureStorageBlobCopyCommand
 				{
-					SrcBlob = "AzureTest.vhd", //TODO: pass this in
+					SrcBlob = sourceVhdName,
 					SrcContainer = "vhds", //TODO: ditto
 					DestContainer = "vhds", //TODO: double ditto
-					DestBlob = String.Format("AzureTest-{0}.vhd", virtualMachine.Name),
+					DestBlob = String.Format("{0}.vhd", dataDiskName),
 					Force = true
 				};
 
@@ -192,15 +195,15 @@ namespace AzureVmFarmer.Core.Messengers.Impl
 			}
 		}
 
-		private static void CreateDisk(Runspace runspace, VirtualMachine virtualMachine)
+		private static void CreateDisk(Runspace runspace, VirtualMachine virtualMachine, string dataDiskName)
 		{
 			using (var pipeline = runspace.CreatePipeline())
 			{
 				var addAzureDiskCommand = new AddAzureDiskCommand
 				{
-					DiskName = String.Format("AzureTest-{0}", virtualMachine.Name), //TODO: you know the drill
-					Label = "AzureTest", //TODO: yup
-					MediaLocation = String.Format("http://numats.blob.core.windows.net/vhds/AzureTest-{0}.vhd", virtualMachine.Name)
+					DiskName = dataDiskName,
+					Label = "NuMatsDrive", //TODO: yup
+					MediaLocation = String.Format("http://numats.blob.core.windows.net/vhds/{0}.vhd", dataDiskName)
 					//TODO: for serious
 				};
 

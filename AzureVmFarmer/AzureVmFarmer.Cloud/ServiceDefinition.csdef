@@ -8,6 +8,7 @@
 			<Setting name="ServiceBus.ConnectionString" />
 			<Setting name="QueueName" />
 			<Setting name="VirtualMachineBaseImageName" />
+			<Setting name="DataDiskName" />
 		</ConfigurationSettings>
 	</WorkerRole>
 </ServiceDefinition>

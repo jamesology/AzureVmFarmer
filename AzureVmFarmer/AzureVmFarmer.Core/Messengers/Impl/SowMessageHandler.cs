@@ -13,35 +13,41 @@ namespace AzureVmFarmer.Core.Messengers.Impl
 {
 	public class SowMessageHandler : IMessageHandler
 	{
+		//TODO: abstract away powershell execution
 		public void HandleMessage(BrokeredMessage message)
 		{
-			using (var runspace = RunspaceFactory.CreateRunspace())
+			if (message.GetMessageType() == "Create")
 			{
-				runspace.Open();
-
-				var virtualMachine = message.GetObject<VirtualMachine>();
-				var imageName = CloudConfigurationManager.GetSetting("VirtualMachineBaseImageName");
-				var dataDiskBase = CloudConfigurationManager.GetSetting("DataDiskName");
-				var dataDiskName = String.Format("{0}-{1}", dataDiskBase, virtualMachine.Name);
-				var sourceVhdName = String.Format("{0}.vhd", dataDiskBase);
-
-				//var subscriptionId = CloudConfigurationManager.GetSetting("Azure.SubscriptionId");
-				//var managementCertificateString = CloudConfigurationManager.GetSetting("Azure.ManagementCertificate");
-				//var managementCertificate = new X509Certificate2(Convert.FromBase64String(managementCertificateString));
-				//var credentials = new CertificateCloudCredentials(subscriptionId, managementCertificate);
-
-				//TODO: find a subscription?
-
-				//TODO: get storage account?
-
-				if (AzureVmExists(runspace, virtualMachine) == false)
+				using (var runspace = RunspaceFactory.CreateRunspace())
 				{
-					CreateNewVirtualMachine(runspace, virtualMachine, imageName, dataDiskName, sourceVhdName);
+					runspace.Open();
+
+					var virtualMachine = message.GetObject<VirtualMachine>();
+					var imageName = CloudConfigurationManager.GetSetting("VirtualMachineBaseImageName");
+					var dataDiskBase = CloudConfigurationManager.GetSetting("DataDiskName");
+					var dataDiskName = String.Format("{0}-{1}", dataDiskBase, virtualMachine.Name);
+					var sourceVhdName = String.Format("{0}.vhd", dataDiskBase);
+
+					//var subscriptionId = CloudConfigurationManager.GetSetting("Azure.SubscriptionId");
+					//var managementCertificateString = CloudConfigurationManager.GetSetting("Azure.ManagementCertificate");
+					//var managementCertificate = new X509Certificate2(Convert.FromBase64String(managementCertificateString));
+					//var credentials = new CertificateCloudCredentials(subscriptionId, managementCertificate);
+
+					//TODO: find a subscription?
+
+					//TODO: get storage account?
+
+					if (AzureVmExists(runspace, virtualMachine) == false)
+					{
+						CreateNewVirtualMachine(runspace, virtualMachine, imageName, dataDiskName, sourceVhdName);
+					}
+
+					runspace.Close();
 				}
-
-				//TODO: attach disk?
-
-				runspace.Close();
+			}
+			else
+			{
+				throw new ArgumentException("Invalid Message Type.", "message");
 			}
 		}
 

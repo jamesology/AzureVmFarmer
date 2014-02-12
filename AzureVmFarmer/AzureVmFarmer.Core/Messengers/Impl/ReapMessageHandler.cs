@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Management.Automation.Runspaces;
 using AzureVmFarmer.Core.Commands;
@@ -8,26 +9,34 @@ namespace AzureVmFarmer.Core.Messengers.Impl
 {
 	public class ReapMessageHandler : IMessageHandler
 	{
+		//TODO: abstract away powershell execution
 		public void HandleMessage(BrokeredMessage message)
 		{
-			using (var runspace = RunspaceFactory.CreateRunspace())
+			if (message.GetMessageType() == "Delete")
 			{
-				runspace.Open();
+				using (var runspace = RunspaceFactory.CreateRunspace())
+				{
+					runspace.Open();
 
-				var virtualMachine = message.GetObject<VirtualMachine>();
+					var virtualMachine = message.GetObject<VirtualMachine>();
 
-				//var subscriptionId = CloudConfigurationManager.GetSetting("Azure.SubscriptionId");
-				//var managementCertificateString = CloudConfigurationManager.GetSetting("Azure.ManagementCertificate");
-				//var managementCertificate = new X509Certificate2(Convert.FromBase64String(managementCertificateString));
-				//var credentials = new CertificateCloudCredentials(subscriptionId, managementCertificate);
+					//var subscriptionId = CloudConfigurationManager.GetSetting("Azure.SubscriptionId");
+					//var managementCertificateString = CloudConfigurationManager.GetSetting("Azure.ManagementCertificate");
+					//var managementCertificate = new X509Certificate2(Convert.FromBase64String(managementCertificateString));
+					//var credentials = new CertificateCloudCredentials(subscriptionId, managementCertificate);
 
-				//TODO: find a subscription?
+					//TODO: find a subscription?
 
-				//TODO: get storage account?
+					//TODO: get storage account?
 
-				DeleteExistingArtifacts(runspace, virtualMachine);
+					DeleteExistingArtifacts(runspace, virtualMachine);
 
-				runspace.Close();
+					runspace.Close();
+				}
+			}
+			else
+			{
+				throw new ArgumentException("Invalid Message Type.", "message");
 			}
 		}
 

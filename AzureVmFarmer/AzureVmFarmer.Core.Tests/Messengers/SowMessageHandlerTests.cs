@@ -1,3 +1,5 @@
+using AzureVmFarmer.Core.Messengers.Impl;
+using Microsoft.ServiceBus.Messaging;
 using NUnit.Framework;
 
 namespace AzureVmFarmer.Core.Tests.Messengers
@@ -6,9 +8,16 @@ namespace AzureVmFarmer.Core.Tests.Messengers
 	class SowMessageHandlerTests
 	{
 		[Test]
-		public void Stub()
+		public void HandleMessage_MessageTypeIsCreate_ThrowsArgumentException()
 		{
-			Assert.Fail();
+			var message = new BrokeredMessage();
+			message.SetMessageType("Delete");
+
+			var messageHandler = new SowMessageHandler();
+
+			Assert.That(() => messageHandler.HandleMessage(message), Throws.ArgumentException);
 		}
+
+		//TODO: complete testing when powershell abstraction exists.
 	}
 }

@@ -1,4 +1,6 @@
-﻿using NUnit.Framework;
+﻿using System.Management.Automation.Runspaces;
+using AzureVmFarmer.Core.Commands;
+using NUnit.Framework;
 
 namespace AzureVmFarmer.Core.Tests.Commands
 {
@@ -6,9 +8,13 @@ namespace AzureVmFarmer.Core.Tests.Commands
 	class UpdateAzureVmCommandTests
 	{
 		[Test]
-		public void Stub()
+		public void CommandOperator_DefaultValues_SetsNothing()
 		{
-			Assert.Fail();
+			var expected = new UpdateAzureVmCommand();
+
+			Command actual = expected;
+
+			Assert.That(actual.Parameters, Is.Empty);
 		}
 	}
 }

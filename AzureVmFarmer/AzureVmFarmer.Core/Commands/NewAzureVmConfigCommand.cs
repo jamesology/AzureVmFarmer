@@ -6,13 +6,13 @@ namespace AzureVmFarmer.Core.Commands
 	public class NewAzureVmConfigCommand : PowerShellCommand
 	{
 		private const string CommandName = "New-AzureVMConfig";
-		private const string NameParameter = "Name";
-		private const string ImageNameParameter = "ImageName";
-		private const string InstanceSizeParameter = "InstanceSize";
+		public const string NameParameter = "Name";
+		public const string ImageNameParameter = "ImageName";
+		public const string InstanceSizeParameter = "InstanceSize";
 
 		public string Name { get; set; }
 		public string ImageName { get; set; }
-		public string InstanceSize { get; set; }
+		public string InstanceSize { get; set; } //TODO: Make enum?
 
 		protected override Command BuildCommand()
 		{

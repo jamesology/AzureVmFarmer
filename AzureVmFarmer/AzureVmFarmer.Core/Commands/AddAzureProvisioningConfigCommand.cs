@@ -6,10 +6,10 @@ namespace AzureVmFarmer.Core.Commands
 	public class AddAzureProvisioningConfigCommand : PowerShellCommand
 	{
 		private const string CommandName = "Add-AzureProvisioningConfig";
-		private const string WindowsParameter = "Windows";
-		private const string PasswordParameter = "Password";
-		private const string AdminUsernameParameter = "AdminUsername";
-		private const string TimeZoneParameter = "TimeZone";
+		public const string WindowsParameter = "Windows";
+		public const string PasswordParameter = "Password";
+		public const string AdminUsernameParameter = "AdminUsername";
+		public const string TimeZoneParameter = "TimeZone";
 
 		public bool Windows { get; set; }
 		public string AdminPassword { get; set; }

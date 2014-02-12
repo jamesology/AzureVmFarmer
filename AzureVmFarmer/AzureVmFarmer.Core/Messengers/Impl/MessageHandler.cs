@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using AzureVmFarmer.Core.PowershellCommandExecutor;
 using Microsoft.ServiceBus.Messaging;
 
 namespace AzureVmFarmer.Core.Messengers.Impl
@@ -8,12 +9,12 @@ namespace AzureVmFarmer.Core.Messengers.Impl
 	{
 		private readonly IDictionary<string, IMessageHandler> _handlers;
 
-		public MessageHandler()
+		public MessageHandler(IPowershellExecutor executor)
 		{
 			_handlers = new Dictionary<string, IMessageHandler>
 			{
-				{"Create", new SowMessageHandler()},
-				{"Delete", new ReapMessageHandler()}
+				{"Create", new SowMessageHandler(executor)},
+				{"Delete", new ReapMessageHandler(executor)}
 			};
 		}
 

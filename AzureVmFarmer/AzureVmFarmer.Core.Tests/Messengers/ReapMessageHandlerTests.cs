@@ -1,6 +1,8 @@
 ﻿using AzureVmFarmer.Core.Messengers.Impl;
+using AzureVmFarmer.Core.PowershellCommandExecutor;
 using Microsoft.ServiceBus.Messaging;
 using NUnit.Framework;
+using Rhino.Mocks;
 
 namespace AzureVmFarmer.Core.Tests.Messengers
 {
@@ -13,7 +15,9 @@ namespace AzureVmFarmer.Core.Tests.Messengers
 			var message = new BrokeredMessage();
 			message.SetMessageType("Create");
 
-			var messageHandler = new ReapMessageHandler();
+			var executor = MockRepository.GenerateStub<IPowershellExecutor>();
+
+			var messageHandler = new ReapMessageHandler(executor);
 
 			Assert.That(() => messageHandler.HandleMessage(message), Throws.ArgumentException);
 		}

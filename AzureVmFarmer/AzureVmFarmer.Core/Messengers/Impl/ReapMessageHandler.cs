@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Management.Automation.Runspaces;
 using AzureVmFarmer.Core.Commands;
+using AzureVmFarmer.Core.PowershellCommandExecutor;
 using AzureVmFarmer.Objects;
 using Microsoft.ServiceBus.Messaging;
 
@@ -9,30 +10,29 @@ namespace AzureVmFarmer.Core.Messengers.Impl
 {
 	public class ReapMessageHandler : IMessageHandler
 	{
-		//TODO: abstract away powershell execution
+		private readonly IPowershellExecutor _executor;
+
+		public ReapMessageHandler(IPowershellExecutor executor)
+		{
+			_executor = executor;
+		}
+
 		public void HandleMessage(BrokeredMessage message)
 		{
 			if (message.GetMessageType() == "Delete")
 			{
-				using (var runspace = RunspaceFactory.CreateRunspace())
-				{
-					runspace.Open();
+				var virtualMachine = message.GetObject<VirtualMachine>();
 
-					var virtualMachine = message.GetObject<VirtualMachine>();
+				//var subscriptionId = CloudConfigurationManager.GetSetting("Azure.SubscriptionId");
+				//var managementCertificateString = CloudConfigurationManager.GetSetting("Azure.ManagementCertificate");
+				//var managementCertificate = new X509Certificate2(Convert.FromBase64String(managementCertificateString));
+				//var credentials = new CertificateCloudCredentials(subscriptionId, managementCertificate);
 
-					//var subscriptionId = CloudConfigurationManager.GetSetting("Azure.SubscriptionId");
-					//var managementCertificateString = CloudConfigurationManager.GetSetting("Azure.ManagementCertificate");
-					//var managementCertificate = new X509Certificate2(Convert.FromBase64String(managementCertificateString));
-					//var credentials = new CertificateCloudCredentials(subscriptionId, managementCertificate);
+				//TODO: find a subscription?
 
-					//TODO: find a subscription?
+				//TODO: get storage account?
 
-					//TODO: get storage account?
-
-					DeleteExistingArtifacts(runspace, virtualMachine);
-
-					runspace.Close();
-				}
+				DeleteExistingArtifacts(_executor, virtualMachine);
 			}
 			else
 			{
@@ -40,51 +40,39 @@ namespace AzureVmFarmer.Core.Messengers.Impl
 			}
 		}
 
-		private static void DeleteExistingArtifacts(Runspace runspace, VirtualMachine virtualMachine)
+		private static void DeleteExistingArtifacts(IPowershellExecutor executor, VirtualMachine virtualMachine)
 		{
-			if (AzureServiceExists(runspace, virtualMachine))
+			if (AzureServiceExists(executor, virtualMachine))
 			{
-				DeleteExistingService(runspace, virtualMachine);
+				DeleteExistingService(executor, virtualMachine);
 			}
 		}
 
-		private static bool AzureServiceExists(Runspace runspace, VirtualMachine virtualMachine)
+		private static bool AzureServiceExists(IPowershellExecutor executor, VirtualMachine virtualMachine)
 		{
-			bool result;
-
-			using (var pipeline = runspace.CreatePipeline())
+			var getAzureServiceCommand = new GetAzureServiceCommand
 			{
-				var getAzureServiceCommand = new GetAzureServiceCommand
-				{
-					ServiceName = virtualMachine.Name,
-					ErrorAction = "Ignore"
-				};
+				ServiceName = virtualMachine.Name,
+				ErrorAction = "Ignore"
+			};
 
-				pipeline.Commands.Add(getAzureServiceCommand);
+			var results = executor.Execute(getAzureServiceCommand);
 
-				var results = pipeline.Execute();
-
-				result = results.Any();
-			}
+			var result = results.Any();
 
 			return result;
 		}
 
-		private static void DeleteExistingService(Runspace runspace, VirtualMachine virtualMachine)
+		private static void DeleteExistingService(IPowershellExecutor executor, VirtualMachine virtualMachine)
 		{
-			using (var pipeline = runspace.CreatePipeline())
+			var removeAzureServiceCommand = new RemoveAzureServiceCommand
 			{
-				var removeAzureServiceCommand = new RemoveAzureServiceCommand
-				{
-					ServiceName = virtualMachine.Name,
-					Force = true,
-					DeleteAll = true
-				};
+				ServiceName = virtualMachine.Name,
+				Force = true,
+				DeleteAll = true
+			};
 
-				pipeline.Commands.Add(removeAzureServiceCommand);
-
-				pipeline.Execute();
-			}
+			executor.Execute(removeAzureServiceCommand);
 		}
 	}
 }

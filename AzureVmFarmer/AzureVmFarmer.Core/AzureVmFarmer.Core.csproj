@@ -89,6 +89,8 @@
     <Compile Include="Messengers\Impl\ReapMessageHandler.cs" />
     <Compile Include="Messengers\Impl\SowMessageHandler.cs" />
     <Compile Include="PipelineExtensions.cs" />
+    <Compile Include="PowershellCommandExecutor\Impl\PowershellExecutor.cs" />
+    <Compile Include="PowershellCommandExecutor\IPowershellExecutor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\Impl\VirtualMachineRepository.cs" />
     <Compile Include="Repositories\IVirtualMachineRepository.cs" />

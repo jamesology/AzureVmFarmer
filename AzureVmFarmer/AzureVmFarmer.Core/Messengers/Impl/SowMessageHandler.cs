@@ -141,33 +141,36 @@ namespace AzureVmFarmer.Core.Messengers.Impl
 
 			var results = executor.Execute(azureStorageBlobCopyCommand);
 
-			var copyPending = false;
-
-			var getAzureStorageBlobCopyStateCommand = new GetAzureStorageBlobCopyStateCommand();
-
-			do
+			if (results.Any())
 			{
-				var copyResult = executor.Execute(results, getAzureStorageBlobCopyStateCommand)
-					.Cast<PSObject>()
-					.Select(x => x.BaseObject)
-					.FirstOrDefault();
+				var copyPending = false;
 
-				if (copyResult != null)
+				var getAzureStorageBlobCopyStateCommand = new GetAzureStorageBlobCopyStateCommand();
+
+				do
 				{
-					var type = copyResult.GetType();
+					var copyResult = executor.Execute(results, getAzureStorageBlobCopyStateCommand)
+						.OfType<PSObject>()
+						.Select(x => x.BaseObject)
+						.FirstOrDefault();
 
-					var property = type.GetProperty("Status", BindingFlags.Instance | BindingFlags.Public);
+					if (copyResult != null)
+					{
+						var type = copyResult.GetType();
 
-					var value = String.Format("{0}", property.GetValue(copyResult));
+						var property = type.GetProperty("Status", BindingFlags.Instance | BindingFlags.Public);
 
-					copyPending = (value == "Pending");
-				}
+						var value = String.Format("{0}", property.GetValue(copyResult));
 
-				if (copyPending)
-				{
-					Thread.Sleep(10);
-				}
-			} while (copyPending);
+						copyPending = (value == "Pending");
+					}
+
+					if (copyPending)
+					{
+						Thread.Sleep(10);
+					}
+				} while (copyPending);
+			}
 
 		}
 

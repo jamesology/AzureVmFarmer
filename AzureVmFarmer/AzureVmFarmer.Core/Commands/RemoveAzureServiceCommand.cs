@@ -6,9 +6,9 @@ namespace AzureVmFarmer.Core.Commands
 	public class RemoveAzureServiceCommand : PowerShellCommand
 	{
 		private const string CommandName = "Remove-AzureService";
-		private const string ServiceNameParameter = "ServiceName";
-		private const string ForceParameter = "Force";
-		private const string DeleteAllParameter = "DeleteAll";
+		public const string ServiceNameParameter = "ServiceName";
+		public const string ForceParameter = "Force";
+		public const string DeleteAllParameter = "DeleteAll";
 
 		public string ServiceName { get; set; }
 		public bool Force { get; set; }

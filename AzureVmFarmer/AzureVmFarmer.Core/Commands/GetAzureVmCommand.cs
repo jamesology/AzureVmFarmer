@@ -6,8 +6,8 @@ namespace AzureVmFarmer.Core.Commands
 	public class GetAzureVmCommand : PowerShellCommand
 	{
 		private const string CommandName = "Get-AzureVM";
-		private const string NameParameter = "Name";
-		private const string ServiceNameParameter = "ServiceName";
+		public const string NameParameter = "Name";
+		public const string ServiceNameParameter = "ServiceName";
 
 		public string Name { get; set; }
 		public string ServiceName { get; set; }

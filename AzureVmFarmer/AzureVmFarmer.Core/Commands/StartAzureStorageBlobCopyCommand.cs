@@ -3,25 +3,14 @@ using System.Management.Automation.Runspaces;
 
 namespace AzureVmFarmer.Core.Commands
 {
-	public class GetAzureStorageBlobCopyStateCommand:PowerShellCommand
-	{
-		private const string CommandName = "Get-AzureStorageBlobCopyState";
-		protected override Command BuildCommand()
-		{
-			var result = new Command(CommandName);
-
-			return result;
-		}
-	}
-
 	public class StartAzureStorageBlobCopyCommand : PowerShellCommand
 	{
 		private const string CommandName = "Start-AzureStorageBlobCopy";
-		private const string SrcBlobParameter = "SrcBlob";
-		private const string SrcContainerParameter = "SrcContainer";
-		private const string DestBlobParameter = "DestBlob";
-		private const string DestContainerParameter = "DestContainer";
-		private const string ForceParameter = "Force";
+		public const string SrcBlobParameter = "SrcBlob";
+		public const string SrcContainerParameter = "SrcContainer";
+		public const string DestBlobParameter = "DestBlob";
+		public const string DestContainerParameter = "DestContainer";
+		public const string ForceParameter = "Force";
 
 		public string SrcBlob { get; set; }
 		public string SrcContainer { get; set; }

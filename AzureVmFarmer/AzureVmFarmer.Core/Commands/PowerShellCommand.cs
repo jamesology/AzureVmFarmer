@@ -51,7 +51,7 @@ namespace AzureVmFarmer.Core.Commands
 				result.Parameters.Add(OutBufferParameter, command.OutBuffer);
 			}
 
-			if (String.IsNullOrWhiteSpace(command.OutVariable))
+			if (String.IsNullOrWhiteSpace(command.OutVariable) == false)
 			{
 				result.Parameters.Add(OutVariableParameter, command.OutVariable);
 			}

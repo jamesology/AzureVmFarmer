@@ -1,14 +1,202 @@
-﻿using NUnit.Framework;
+﻿using System;
+using System.Linq;
+using System.Management.Automation.Runspaces;
+using AzureVmFarmer.Core.Commands;
+using NUnit.Framework;
 
 namespace AzureVmFarmer.Core.Tests.Commands
 {
 	[TestFixture]
 	class PowerShellCommandTests
 	{
-		[Test]
-		public void Stub()
+		private class PowerShellCommandTestHarness : PowerShellCommand
 		{
-			Assert.Fail();
+			protected override Command BuildCommand()
+			{
+				return new Command(String.Empty);
+			}
+		}
+
+		[Test]
+		public void CommandOperator_SetsNothing()
+		{
+			var expected = new PowerShellCommandTestHarness();
+
+			Command actual = expected;
+
+			Assert.That(actual.Parameters.Count, Is.EqualTo(0));
+		}
+
+		[Test]
+		public void CommandOperator_DebugFalse_SetsNothing()
+		{
+			var expected = new PowerShellCommandTestHarness
+			{
+				Debug = false
+			};
+
+			Command actual = expected;
+			var debugParameter = actual.Parameters.FirstOrDefault(x => x.Name == "Debug");
+
+			Assert.That(debugParameter, Is.Null);
+		}
+
+		[Test]
+		public void CommandOperator_DebugTrue_SetsDebug()
+		{
+			var expected = new PowerShellCommandTestHarness
+			{
+				Debug = true
+			};
+
+			Command actual = expected;
+			var debugParameter = actual.Parameters.FirstOrDefault(x => x.Name == "Debug");
+
+			Assert.That(debugParameter, Is.Not.Null);
+		}
+
+		[Test]
+		public void CommandOperator_ErrorActionIsEmpty_SetsNothing()
+		{
+			var expected = new PowerShellCommandTestHarness
+			{
+				ErrorAction = String.Empty
+			};
+
+			Command actual = expected;
+			var errorActionParameter = actual.Parameters.FirstOrDefault(x => x.Name == "ErrorAction");
+
+			Assert.That(errorActionParameter, Is.Null);
+		}
+
+		[Test]
+		public void CommandOperator_ErrorActionIsSomething_SetsErrorAction()
+		{
+			var expected = new PowerShellCommandTestHarness
+			{
+				ErrorAction = "SomeAction"
+			};
+
+			Command actual = expected;
+			var errorActionParameter = actual.Parameters.FirstOrDefault(x => x.Name == "ErrorAction");
+
+			Assert.That(errorActionParameter, Is.Not.Null);
+			Assert.That(errorActionParameter.Value, Is.EqualTo("SomeAction"));
+		}
+
+		[Test]
+		public void CommandOperator_ErrorVariableIsEmpty_SetsNothing()
+		{
+			var expected = new PowerShellCommandTestHarness
+			{
+				ErrorVariable = String.Empty
+			};
+
+			Command actual = expected;
+			var errorVariableParameter = actual.Parameters.FirstOrDefault(x => x.Name == "ErrorVariable");
+
+			Assert.That(errorVariableParameter, Is.Null);
+		}
+
+		[Test]
+		public void CommandOperator_ErrorVariableIsSomething_SetsErrorVariable()
+		{
+			var expected = new PowerShellCommandTestHarness
+			{
+				ErrorVariable = "SomeVariable"
+			};
+
+			Command actual = expected;
+			var errorVariableParameter = actual.Parameters.FirstOrDefault(x => x.Name == "ErrorVariable");
+
+			Assert.That(errorVariableParameter, Is.Not.Null);
+			Assert.That(errorVariableParameter.Value, Is.EqualTo("SomeVariable"));
+		}
+
+		[Test]
+		public void CommandOperator_OutBufferIsZero_SetsNothing()
+		{
+			var expected = new PowerShellCommandTestHarness
+			{
+				OutBuffer = 0
+			};
+
+			Command actual = expected;
+			var outBufferParameter = actual.Parameters.FirstOrDefault(x => x.Name == "OutBuffer");
+
+			Assert.That(outBufferParameter, Is.Null);
+		}
+
+		[Test]
+		public void CommandOperator_OutBufferIsSomething_SetsOutBuffer()
+		{
+			var expected = new PowerShellCommandTestHarness
+			{
+				OutBuffer = 10
+			};
+
+			Command actual = expected;
+			var outBufferParameter = actual.Parameters.FirstOrDefault(x => x.Name == "OutBuffer");
+
+			Assert.That(outBufferParameter, Is.Not.Null);
+			Assert.That(outBufferParameter.Value, Is.EqualTo(10));
+		}
+
+		[Test]
+		public void CommandOperator_OutVariableIsEmpty_SetsNothing()
+		{
+			var expected = new PowerShellCommandTestHarness
+			{
+				OutVariable = String.Empty
+			};
+
+			Command actual = expected;
+			var outVariableParameter = actual.Parameters.FirstOrDefault(x => x.Name == "OutVariable");
+
+			Assert.That(outVariableParameter, Is.Null);
+		}
+
+		[Test]
+		public void CommandOperator_OutVariableIsSomething_SetsOutVariable()
+		{
+			var expected = new PowerShellCommandTestHarness
+			{
+				OutVariable = "SomeVariable"
+			};
+
+			Command actual = expected;
+			var outVariableParameter = actual.Parameters.FirstOrDefault(x => x.Name == "OutVariable");
+
+			Assert.That(outVariableParameter, Is.Not.Null);
+			Assert.That(outVariableParameter.Value, Is.EqualTo("SomeVariable"));
+		}
+
+		[Test]
+		public void CommandOperator_VerboseIsFalse_SetsNothing()
+		{
+			var expected = new PowerShellCommandTestHarness
+			{
+				Verbose = false
+			};
+
+			Command actual = expected;
+			var verboseParameter = actual.Parameters.FirstOrDefault(x => x.Name == "Verbose");
+
+			Assert.That(verboseParameter, Is.Null);
+		}
+
+		[Test]
+		public void CommandOperator_VerboseIsTrue_SetsVerbose()
+		{
+			var expected = new PowerShellCommandTestHarness
+			{
+				Verbose = true
+			};
+
+			Command actual = expected;
+			var verboseParameter = actual.Parameters.FirstOrDefault(x => x.Name == "Verbose");
+
+			Assert.That(verboseParameter, Is.Not.Null);
 		}
 	}
 }

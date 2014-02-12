@@ -24,7 +24,7 @@ namespace AzureVmFarmer.Core.Tests.Commands
 
 			Command actual = expected;
 
-			Assert.That(actual.Parameters.Count, Is.EqualTo(0));
+			Assert.That(actual.Parameters, Is.Empty);
 		}
 
 		[Test]

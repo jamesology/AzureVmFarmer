@@ -15,8 +15,8 @@ namespace AzureVmFarmer.Core.Tests.Commands
 			var expected = new AddAzureDiskCommand();
 
 			Command actual = expected;
-			
-			Assert.That(actual.Parameters.Count, Is.EqualTo(0));
+
+			Assert.That(actual.Parameters, Is.Empty);
 		}
 
 		[Test]

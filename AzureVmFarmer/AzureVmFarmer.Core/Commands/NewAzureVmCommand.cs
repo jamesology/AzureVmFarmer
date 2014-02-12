@@ -6,9 +6,9 @@ namespace AzureVmFarmer.Core.Commands
 	public class NewAzureVmCommand : PowerShellCommand
 	{
 		private const string CommandName = "New-AzureVM";
-		private const string LocationParameter = "Location";
-		private const string ServiceNameParameter = "ServiceName";
-		private const string WaitForBootParameter = "WaitForBoot";
+		public const string LocationParameter = "Location";
+		public const string ServiceNameParameter = "ServiceName";
+		public const string WaitForBootParameter = "WaitForBoot";
 
 		public string Location { get; set; }
 		public string ServiceName { get; set; }

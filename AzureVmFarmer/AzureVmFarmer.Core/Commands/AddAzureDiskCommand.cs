@@ -6,9 +6,9 @@ namespace AzureVmFarmer.Core.Commands
 	public class AddAzureDiskCommand : PowerShellCommand
 	{
 		private const string CommandName = "Add-AzureDisk";
-		private const string DiskNameParameter = "DiskName";
-		private const string LabelParameter = "Label";
-		private const string MediaLocationParameter = "MediaLocation";
+		public const string DiskNameParameter = "DiskName";
+		public const string LabelParameter = "Label";
+		public const string MediaLocationParameter = "MediaLocation";
 
 		public string DiskName { get; set; }
 		public string Label { get; set; }

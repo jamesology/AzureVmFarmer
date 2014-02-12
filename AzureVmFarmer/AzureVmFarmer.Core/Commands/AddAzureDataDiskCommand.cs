@@ -6,13 +6,13 @@ namespace AzureVmFarmer.Core.Commands
 	public class AddAzureDataDiskCommand : PowerShellCommand
 	{
 		private const string CommandName = "Add-AzureDataDisk";
-		private const string ImportParameter = "Import";
-		private const string DiskNameParameter = "DiskName";
-		private const string LogicalUnitNumberParameter = "LUN";
+		public const string ImportParameter = "Import";
+		public const string DiskNameParameter = "DiskName";
+		public const string LogicalUnitNumberParameter = "LUN";
 
 		public bool Import { get; set; }
 		public string DiskName { get; set; }
-		public int LogicalUnitNumber { get; set; }
+		public int? LogicalUnitNumber { get; set; }
 
 		protected override Command BuildCommand()
 		{
@@ -28,7 +28,7 @@ namespace AzureVmFarmer.Core.Commands
 				result.Parameters.Add(DiskNameParameter, DiskName);
 			}
 
-			if (LogicalUnitNumber >= 0)
+			if (LogicalUnitNumber.HasValue && (LogicalUnitNumber.Value >= 0))
 			{
 				result.Parameters.Add(LogicalUnitNumberParameter, LogicalUnitNumber);
 			}

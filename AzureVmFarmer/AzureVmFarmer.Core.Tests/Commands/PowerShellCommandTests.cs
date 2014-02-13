@@ -81,7 +81,7 @@ namespace AzureVmFarmer.Core.Tests.Commands
 			var errorActionParameter = actual.Parameters.FirstOrDefault(x => x.Name == "ErrorAction");
 
 			Assert.That(errorActionParameter, Is.Not.Null);
-			Assert.That(errorActionParameter.Value, Is.EqualTo(ErrorAction.Stop));
+			Assert.That(errorActionParameter.Value, Is.EqualTo(expected.ErrorAction));
 		}
 
 		[Test]
@@ -110,7 +110,54 @@ namespace AzureVmFarmer.Core.Tests.Commands
 			var errorVariableParameter = actual.Parameters.FirstOrDefault(x => x.Name == "ErrorVariable");
 
 			Assert.That(errorVariableParameter, Is.Not.Null);
-			Assert.That(errorVariableParameter.Value, Is.EqualTo("SomeVariable"));
+			Assert.That(errorVariableParameter.Value, Is.EqualTo(expected.ErrorVariable));
+		}
+
+		[Test]
+		public void CommandOperator_ErrorVariableIsEmptyErrorVariableAppendIsTrue_SetsNothing()
+		{
+			var expected = new PowerShellCommandTestHarness
+			{
+				ErrorVariable = String.Empty,
+				ErrorVariableAppend = true
+			};
+
+			Command actual = expected;
+			var errorVariableParameter = actual.Parameters.FirstOrDefault(x => x.Name == "ErrorVariable");
+
+			Assert.That(errorVariableParameter, Is.Null);
+		}
+
+		[Test]
+		public void CommandOperator_ErrorVariableIsSomethingErrorVariableAppendIsFalse_SetsErrorVariable()
+		{
+			var expected = new PowerShellCommandTestHarness
+			{
+				ErrorVariable = "SomeVariable",
+				ErrorVariableAppend = false
+			};
+
+			Command actual = expected;
+			var errorVariableParameter = actual.Parameters.FirstOrDefault(x => x.Name == "ErrorVariable");
+
+			Assert.That(errorVariableParameter, Is.Not.Null);
+			Assert.That(errorVariableParameter.Value, Is.EqualTo(expected.ErrorVariable));
+		}
+
+		[Test]
+		public void CommandOperator_ErrorVariableIsSomethingErrorVariableAppendIsTrue_SetsErrorVariableWithAppend()
+		{
+			var expected = new PowerShellCommandTestHarness
+			{
+				ErrorVariable = "SomeVariable",
+				ErrorVariableAppend = true
+			};
+
+			Command actual = expected;
+			var errorVariableParameter = actual.Parameters.FirstOrDefault(x => x.Name == "ErrorVariable");
+
+			Assert.That(errorVariableParameter, Is.Not.Null);
+			Assert.That(errorVariableParameter.Value, Is.EqualTo(String.Format("+{0}", expected.ErrorVariable)));
 		}
 
 		[Test]
@@ -139,7 +186,7 @@ namespace AzureVmFarmer.Core.Tests.Commands
 			var outBufferParameter = actual.Parameters.FirstOrDefault(x => x.Name == "OutBuffer");
 
 			Assert.That(outBufferParameter, Is.Not.Null);
-			Assert.That(outBufferParameter.Value, Is.EqualTo(10));
+			Assert.That(outBufferParameter.Value, Is.EqualTo(expected.OutBuffer));
 		}
 
 		[Test]
@@ -168,7 +215,7 @@ namespace AzureVmFarmer.Core.Tests.Commands
 			var outVariableParameter = actual.Parameters.FirstOrDefault(x => x.Name == "OutVariable");
 
 			Assert.That(outVariableParameter, Is.Not.Null);
-			Assert.That(outVariableParameter.Value, Is.EqualTo("SomeVariable"));
+			Assert.That(outVariableParameter.Value, Is.EqualTo(expected.OutVariable));
 		}
 
 		[Test]

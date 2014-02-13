@@ -15,6 +15,7 @@ namespace AzureVmFarmer.Core.Commands
 		public bool Debug { get; set; }
 		public ErrorAction ErrorAction { get; set; }
 		public string ErrorVariable { get; set; } //TODO: Allow append
+		public bool ErrorVariableAppend { get; set; }
 		public int OutBuffer { get; set; }
 		public string OutVariable { get; set; } //TODO: Allow append
 		public bool Verbose { get; set; }
@@ -42,7 +43,8 @@ namespace AzureVmFarmer.Core.Commands
 
 			if (String.IsNullOrWhiteSpace(command.ErrorVariable) == false)
 			{
-				result.Parameters.Add(ErrorVariableParameter, command.ErrorVariable);
+				var value = string.Format("{0}{1}", command.ErrorVariableAppend ? "+" : String.Empty, command.ErrorVariable);
+				result.Parameters.Add(ErrorVariableParameter, value);
 			}
 
 			if (command.OutBuffer > 0)

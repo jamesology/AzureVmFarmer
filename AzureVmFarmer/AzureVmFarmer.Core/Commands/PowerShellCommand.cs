@@ -14,10 +14,11 @@ namespace AzureVmFarmer.Core.Commands
 
 		public bool Debug { get; set; }
 		public ErrorAction ErrorAction { get; set; }
-		public string ErrorVariable { get; set; } //TODO: Allow append
+		public string ErrorVariable { get; set; }
 		public bool ErrorVariableAppend { get; set; }
 		public int OutBuffer { get; set; }
-		public string OutVariable { get; set; } //TODO: Allow append
+		public string OutVariable { get; set; }
+		public bool OutVariableAppend { get; set; }
 		public bool Verbose { get; set; }
 
 		protected abstract Command BuildCommand();
@@ -54,7 +55,8 @@ namespace AzureVmFarmer.Core.Commands
 
 			if (String.IsNullOrWhiteSpace(command.OutVariable) == false)
 			{
-				result.Parameters.Add(OutVariableParameter, command.OutVariable);
+				var value = string.Format("{0}{1}", command.OutVariableAppend ? "+" : String.Empty, command.OutVariable);
+				result.Parameters.Add(OutVariableParameter, value);
 			}
 
 			return result;

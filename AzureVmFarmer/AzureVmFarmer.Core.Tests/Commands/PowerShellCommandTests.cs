@@ -219,6 +219,53 @@ namespace AzureVmFarmer.Core.Tests.Commands
 		}
 
 		[Test]
+		public void CommandOperator_OutVariableIsEmptyOutVariableAppendIsTrue_SetsNothing()
+		{
+			var expected = new PowerShellCommandTestHarness
+			{
+				OutVariable = String.Empty,
+				OutVariableAppend = true
+			};
+
+			Command actual = expected;
+			var outVariableParameter = actual.Parameters.FirstOrDefault(x => x.Name == "OutVariable");
+
+			Assert.That(outVariableParameter, Is.Null);
+		}
+
+		[Test]
+		public void CommandOperator_OutVariableIsSomethingOutVariableAppendIsFalse_SetsOutVariable()
+		{
+			var expected = new PowerShellCommandTestHarness
+			{
+				OutVariable = "SomeVariable",
+				OutVariableAppend = false
+			};
+
+			Command actual = expected;
+			var outVariableParameter = actual.Parameters.FirstOrDefault(x => x.Name == "OutVariable");
+
+			Assert.That(outVariableParameter, Is.Not.Null);
+			Assert.That(outVariableParameter.Value, Is.EqualTo(expected.OutVariable));
+		}
+
+		[Test]
+		public void CommandOperator_OutVariableIsSomethingOutVariableAppendIsTrue_SetsOutVariableWithAppend()
+		{
+			var expected = new PowerShellCommandTestHarness
+			{
+				OutVariable = "SomeVariable",
+				OutVariableAppend = true
+			};
+
+			Command actual = expected;
+			var outVariableParameter = actual.Parameters.FirstOrDefault(x => x.Name == "OutVariable");
+
+			Assert.That(outVariableParameter, Is.Not.Null);
+			Assert.That(outVariableParameter.Value, Is.EqualTo(String.Format("+{0}", expected.OutVariable)));
+		}
+
+		[Test]
 		public void CommandOperator_VerboseIsFalse_SetsNothing()
 		{
 			var expected = new PowerShellCommandTestHarness

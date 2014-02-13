@@ -53,7 +53,7 @@ namespace AzureVmFarmer.Core.Messengers.Impl
 			var getAzureServiceCommand = new GetAzureServiceCommand
 			{
 				ServiceName = virtualMachine.Name,
-				ErrorAction = "Ignore"
+				ErrorAction = ErrorAction.Ignore
 			};
 
 			var results = executor.Execute(getAzureServiceCommand);

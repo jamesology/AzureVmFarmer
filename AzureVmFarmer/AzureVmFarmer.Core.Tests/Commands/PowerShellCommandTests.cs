@@ -56,11 +56,11 @@ namespace AzureVmFarmer.Core.Tests.Commands
 		}
 
 		[Test]
-		public void CommandOperator_ErrorActionIsEmpty_SetsNothing()
+		public void CommandOperator_ErrorActionIsContinue_SetsNothing()
 		{
 			var expected = new PowerShellCommandTestHarness
 			{
-				ErrorAction = String.Empty
+				ErrorAction = ErrorAction.Continue
 			};
 
 			Command actual = expected;
@@ -74,14 +74,14 @@ namespace AzureVmFarmer.Core.Tests.Commands
 		{
 			var expected = new PowerShellCommandTestHarness
 			{
-				ErrorAction = "SomeAction"
+				ErrorAction = ErrorAction.Stop
 			};
 
 			Command actual = expected;
 			var errorActionParameter = actual.Parameters.FirstOrDefault(x => x.Name == "ErrorAction");
 
 			Assert.That(errorActionParameter, Is.Not.Null);
-			Assert.That(errorActionParameter.Value, Is.EqualTo("SomeAction"));
+			Assert.That(errorActionParameter.Value, Is.EqualTo(ErrorAction.Stop));
 		}
 
 		[Test]

@@ -72,6 +72,7 @@
     <Compile Include="Commands\AddAzureDataDiskCommand.cs" />
     <Compile Include="Commands\AddAzureDiskCommand.cs" />
     <Compile Include="Commands\AddAzureProvisioningConfigCommand.cs" />
+    <Compile Include="Commands\ErrorAction.cs" />
     <Compile Include="Commands\GetAzureServiceCommand.cs" />
     <Compile Include="Commands\GetAzureStorageBlobCopyStateCommand.cs" />
     <Compile Include="Commands\GetAzureVmCommand.cs" />

@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Management.Automation.Runspaces;
 
 namespace AzureVmFarmer.Core.Commands
@@ -14,7 +13,7 @@ namespace AzureVmFarmer.Core.Commands
 		private const string OutVariableParameter = "OutVariable";
 
 		public bool Debug { get; set; }
-		public string ErrorAction { get; set; } //TODO: Enum this sucka
+		public ErrorAction ErrorAction { get; set; }
 		public string ErrorVariable { get; set; } //TODO: Allow append
 		public int OutBuffer { get; set; }
 		public string OutVariable { get; set; } //TODO: Allow append
@@ -36,7 +35,7 @@ namespace AzureVmFarmer.Core.Commands
 				result.Parameters.Add(VerboseParameter);
 			}
 
-			if (String.IsNullOrWhiteSpace(command.ErrorAction) == false)
+			if (command.ErrorAction > ErrorAction.Continue)
 			{
 				result.Parameters.Add(ErrorActionParameter, command.ErrorAction);
 			}

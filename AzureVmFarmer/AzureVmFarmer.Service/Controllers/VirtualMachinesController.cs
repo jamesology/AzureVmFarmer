@@ -70,7 +70,7 @@ namespace AzureVmFarmer.Service.Controllers
 				AdminUserName = ".",
 				Location = ".",
 				Name = name,
-				Size = ".",
+				Size = AzureVirtualMachineSize.None,
 				TimeZone = "."
 			}; //TODO: This feels hacky
 

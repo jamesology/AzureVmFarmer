@@ -249,7 +249,7 @@ namespace AzureVmFarmer.Service.Tests.Controllers
 				AdminPassword = "a;dkljh",
 				AdminUserName = "adjl",
 				Location = "a;sdgh;",
-				Size = "as;dklg",
+				Size = AzureVirtualMachineSize.ExtraSmall,
 				TimeZone = "kl;agh;"
 			};
 			var result = controller.Post(virtualMachine);
@@ -277,7 +277,7 @@ namespace AzureVmFarmer.Service.Tests.Controllers
 				AdminPassword = "a;dkljh",
 				AdminUserName = "adjl",
 				Location = "a;sdgh;",
-				Size = "as;dklg",
+				Size = AzureVirtualMachineSize.ExtraSmall,
 				TimeZone = "kl;agh;"
 			};
 
@@ -307,7 +307,7 @@ namespace AzureVmFarmer.Service.Tests.Controllers
 				AdminPassword = "a;dkljh",
 				AdminUserName = "adjl",
 				Location = "a;sdgh;",
-				Size = "as;dklg",
+				Size = AzureVirtualMachineSize.ExtraSmall,
 				TimeZone = "kl;agh;"
 			};
 
@@ -336,7 +336,7 @@ namespace AzureVmFarmer.Service.Tests.Controllers
 				AdminPassword = "a;dkljh",
 				AdminUserName = "adjl",
 				Location = "a;sdgh;",
-				Size = "as;dklg",
+				Size = AzureVirtualMachineSize.ExtraSmall,
 				TimeZone = "kl;agh;"
 			};
 
@@ -392,7 +392,7 @@ namespace AzureVmFarmer.Service.Tests.Controllers
 				AdminPassword = "a;dkljh",
 				AdminUserName = "adjl",
 				Location = "a;sdgh;",
-				Size = "as;dklg",
+				Size = AzureVirtualMachineSize.ExtraSmall,
 				TimeZone = "kl;agh;"
 			};
 

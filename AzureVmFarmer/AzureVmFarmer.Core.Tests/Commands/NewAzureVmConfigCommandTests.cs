@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Management.Automation.Runspaces;
 using AzureVmFarmer.Core.Commands;
+using AzureVmFarmer.Objects;
 using NUnit.Framework;
 
 namespace AzureVmFarmer.Core.Tests.Commands
@@ -82,7 +83,7 @@ namespace AzureVmFarmer.Core.Tests.Commands
 		{
 			var expected = new NewAzureVmConfigCommand
 			{
-				InstanceSize = String.Empty
+				InstanceSize = AzureVirtualMachineSize.None
 			};
 
 			Command command = expected;
@@ -96,7 +97,7 @@ namespace AzureVmFarmer.Core.Tests.Commands
 		{
 			var expected = new NewAzureVmConfigCommand
 			{
-				InstanceSize = "SomeSize"
+				InstanceSize = AzureVirtualMachineSize.ExtraSmall,
 			};
 
 			Command command = expected;

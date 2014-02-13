@@ -8,8 +8,6 @@ namespace AzureVmFarmer.Core
 	{
 		private const string MessageType = "MessageType";
 
-		private const string VirtualMachineName = "VirtualMachine.Name";
-
 		public static void SetMessageType(this BrokeredMessage message, string messageType)
 		{
 			message.Properties[MessageType] = messageType;
@@ -31,7 +29,9 @@ namespace AzureVmFarmer.Core
 			{
 				var name = String.Format("{0}.{1}", type.Name, property.Name);
 
-				message.Properties[name] = property.GetValue(thinger);
+				message.Properties[name] = property.PropertyType.IsEnum
+					? property.GetValue(thinger).ToString()
+					: property.GetValue(thinger);
 			}
 		}
 
@@ -45,28 +45,14 @@ namespace AzureVmFarmer.Core
 			foreach (var property in properties)
 			{
 				var name = String.Format("{0}.{1}", type.Name, property.Name);
+				var value = property.PropertyType.IsEnum
+					? Enum.Parse(property.PropertyType, message.Properties[name].ToString())
+					: message.Properties[name];
 
-				property.SetValue(result, message.Properties[name]);
+				property.SetValue(result, value);
 			}
 
 			return result;
 		}
-
-		/*public static void SetVirtualMachine(this BrokeredMessage message, VirtualMachine virtualMachine)
-		{
-			message.Properties[VirtualMachineName] = virtualMachine.Name;
-		}
-
-		public static VirtualMachine GetVirtualMachine(this BrokeredMessage message)
-		{
-			var name = Convert.ToString(message.Properties[VirtualMachineName]);
-
-			var result = new VirtualMachine
-			{
-				Name = name
-			};
-
-			return result;
-		}*/
 	}
 }

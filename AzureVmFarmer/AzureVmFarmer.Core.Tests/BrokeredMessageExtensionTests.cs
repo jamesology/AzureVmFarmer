@@ -1,5 +1,10 @@
-﻿using AzureVmFarmer.Objects;
+﻿using System.IO;
+using System.Text;
+using System.Xml;
+using System.Xml.Serialization;
+using AzureVmFarmer.Objects;
 using Microsoft.ServiceBus.Messaging;
+using Newtonsoft.Json;
 using NUnit.Framework;
 
 namespace AzureVmFarmer.Core.Tests
@@ -30,7 +35,7 @@ namespace AzureVmFarmer.Core.Tests
 				AdminUserName = "AdminUserName",
 				AdminPassword = "AdminPassword",
 				Location = "Location",
-				Size = "Size",
+				Size = AzureVirtualMachineSize.ExtraSmall,
 				TimeZone = "TimeZone"
 			};
 
@@ -51,7 +56,7 @@ namespace AzureVmFarmer.Core.Tests
 				AdminUserName = "AdminUserName",
 				AdminPassword = "AdminPassword",
 				Location = "Location",
-				Size = "Size",
+				Size = AzureVirtualMachineSize.ExtraSmall,
 				TimeZone = "TimeZone"
 			};
 
@@ -72,7 +77,7 @@ namespace AzureVmFarmer.Core.Tests
 				AdminUserName = "AdminUserName",
 				AdminPassword = "AdminPassword",
 				Location = "Location",
-				Size = "Size",
+				Size = AzureVirtualMachineSize.ExtraSmall,
 				TimeZone = "TimeZone"
 			};
 
@@ -93,7 +98,7 @@ namespace AzureVmFarmer.Core.Tests
 				AdminUserName = "AdminUserName",
 				AdminPassword = "AdminPassword",
 				Location = "Location",
-				Size = "Size",
+				Size = AzureVirtualMachineSize.ExtraSmall,
 				TimeZone = "TimeZone"
 			};
 
@@ -114,7 +119,7 @@ namespace AzureVmFarmer.Core.Tests
 				AdminUserName = "AdminUserName",
 				AdminPassword = "AdminPassword",
 				Location = "Location",
-				Size = "Size",
+				Size = AzureVirtualMachineSize.ExtraSmall,
 				TimeZone = "TimeZone"
 			};
 
@@ -135,7 +140,7 @@ namespace AzureVmFarmer.Core.Tests
 				AdminUserName = "AdminUserName",
 				AdminPassword = "AdminPassword",
 				Location = "Location",
-				Size = "Size",
+				Size = AzureVirtualMachineSize.ExtraSmall,
 				TimeZone = "TimeZone"
 			};
 

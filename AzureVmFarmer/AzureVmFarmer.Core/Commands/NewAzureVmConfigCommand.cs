@@ -1,5 +1,6 @@
 using System;
 using System.Management.Automation.Runspaces;
+using AzureVmFarmer.Objects;
 
 namespace AzureVmFarmer.Core.Commands
 {
@@ -12,7 +13,7 @@ namespace AzureVmFarmer.Core.Commands
 
 		public string Name { get; set; }
 		public string ImageName { get; set; }
-		public string InstanceSize { get; set; } //TODO: Make enum?
+		public AzureVirtualMachineSize InstanceSize { get; set; }
 
 		protected override Command BuildCommand()
 		{
@@ -28,7 +29,7 @@ namespace AzureVmFarmer.Core.Commands
 				result.Parameters.Add(ImageNameParameter, ImageName);
 			}
 
-			if (String.IsNullOrWhiteSpace(InstanceSize) == false)
+			if (InstanceSize > AzureVirtualMachineSize.None)
 			{
 				result.Parameters.Add(InstanceSizeParameter, InstanceSize);
 			}

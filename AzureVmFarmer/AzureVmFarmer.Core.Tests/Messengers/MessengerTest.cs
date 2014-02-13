@@ -68,7 +68,7 @@ namespace AzureVmFarmer.Core.Tests.Messengers
 				AdminPassword = "a;dkljh",
 				AdminUserName = "adjl",
 				Location = "a;sdgh;",
-				Size = "as;dklg",
+				Size = AzureVirtualMachineSize.ExtraSmall,
 				TimeZone = "kl;agh;"
 			};
 

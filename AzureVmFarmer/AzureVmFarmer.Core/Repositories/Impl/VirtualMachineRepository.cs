@@ -11,7 +11,7 @@ namespace AzureVmFarmer.Core.Repositories.Impl
 
 		public void Create(VirtualMachine machine)
 		{
-			VirtualMachines[machine.Name] = machine;
+			//VirtualMachines[machine.Name] = machine;
 		}
 
 		public IQueryable<VirtualMachine> Read()

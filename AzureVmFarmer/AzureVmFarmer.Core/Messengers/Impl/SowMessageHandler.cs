@@ -30,7 +30,9 @@ namespace AzureVmFarmer.Core.Messengers.Impl
 				var dataDiskBase = CloudConfigurationManager.GetSetting("DataDiskName");
 				var dataDiskName = String.Format("{0}-{1}", dataDiskBase, virtualMachine.Name);
 				var sourceVhdName = String.Format("{0}.vhd", dataDiskBase);
+				var storageContainerUrl = CloudConfigurationManager.GetSetting("StorageContainerUrl");
 				var vhdContainerName = CloudConfigurationManager.GetSetting("VhdContainerName"); //TODO: does this work with multiple storage accounts?
+				var serviceName = CloudConfigurationManager.GetSetting("ServiceName");
 
 				//var subscriptionId = CloudConfigurationManager.GetSetting("Azure.SubscriptionId");
 				//var managementCertificateString = CloudConfigurationManager.GetSetting("Azure.ManagementCertificate");
@@ -43,7 +45,7 @@ namespace AzureVmFarmer.Core.Messengers.Impl
 
 				if (AzureVmExists(_executor, virtualMachine) == false)
 				{
-					CreateNewVirtualMachine(_executor, virtualMachine, imageName, dataDiskName, sourceVhdName, vhdContainerName);
+					CreateNewVirtualMachine(_executor, virtualMachine, imageName, serviceName, sourceVhdName, storageContainerUrl, vhdContainerName, dataDiskName);
 				}
 			}
 			else
@@ -56,7 +58,8 @@ namespace AzureVmFarmer.Core.Messengers.Impl
 		{
 			var getAzureVmCommand = new GetAzureVmCommand
 			{
-				Name = virtualMachine.Name
+				Name = virtualMachine.Name,
+				ServiceName = virtualMachine.Name
 			};
 
 			var results = executor.Execute(getAzureVmCommand);
@@ -66,23 +69,23 @@ namespace AzureVmFarmer.Core.Messengers.Impl
 			return result;
 		}
 
-		private static void CreateNewVirtualMachine(IPowershellExecutor executor, VirtualMachine virtualMachine, string imageName, string dataDiskName, string sourceVhdName, string vhdContainerName)
+		private static void CreateNewVirtualMachine(IPowershellExecutor executor, VirtualMachine virtualMachine, string imageName, string serviceName, string sourceVhdName, string storageAccountUrl, string vhdContainerName, string dataDiskName)
 		{
-			PrepareAzureDrive(executor, dataDiskName, sourceVhdName, vhdContainerName);
+			ProvisionVirtualMachine(executor, virtualMachine, imageName, serviceName);
 
-			ProvisionVirtualMachine(executor, virtualMachine, imageName);
+			PrepareAzureDrive(executor, sourceVhdName, storageAccountUrl, vhdContainerName, dataDiskName);
 
-			AttachAzureDrive(executor, virtualMachine, dataDiskName);
+			AttachAzureDrive(executor, virtualMachine, serviceName, dataDiskName);
 		}
 
-		private static void PrepareAzureDrive(IPowershellExecutor executor, string dataDiskName, string sourceVhdName, string vhdContainerName)
+		private static void PrepareAzureDrive(IPowershellExecutor executor, string sourceVhdName, string storageAccountUrl, string vhdContainerName, string dataDiskName)
 		{
-			CopyVirtualHardDrive(executor, dataDiskName, sourceVhdName, vhdContainerName);
+			CopyVirtualHardDrive(executor, sourceVhdName, vhdContainerName, dataDiskName);
 
-			CreateDisk(executor, dataDiskName);
+			CreateDisk(executor, storageAccountUrl, vhdContainerName, dataDiskName);
 		}
 
-		private static void ProvisionVirtualMachine(IPowershellExecutor executor, VirtualMachine virtualMachine, string imageName)
+		private static void ProvisionVirtualMachine(IPowershellExecutor executor, VirtualMachine virtualMachine, string imageName, string serviceName)
 		{
 			var newAzureVmConfigCommand = new NewAzureVmConfigCommand
 			{
@@ -101,20 +104,21 @@ namespace AzureVmFarmer.Core.Messengers.Impl
 
 			var newAzureVmCommand = new NewAzureVmCommand
 			{
-				Location = virtualMachine.Location,
-				ServiceName = virtualMachine.Name,
+				//Location = virtualMachine.Location,
+				ServiceName = serviceName,
+				DeploymentName = serviceName,
 				WaitForBoot = false
 			};
 
 			var results = executor.Execute(newAzureVmConfigCommand, addAzureProvisioningConfigCommand, newAzureVmCommand);
 		}
 
-		private static void AttachAzureDrive(IPowershellExecutor executor, VirtualMachine virtualMachine, string dataDiskName)
+		private static void AttachAzureDrive(IPowershellExecutor executor, VirtualMachine virtualMachine, string serviceName, string dataDiskName)
 		{
 			var getAzureVm = new GetAzureVmCommand
 			{
 				Name = virtualMachine.Name,
-				ServiceName = virtualMachine.Name
+				ServiceName = serviceName
 			};
 
 			var addAzureDataDisk = new AddAzureDataDiskCommand
@@ -129,7 +133,7 @@ namespace AzureVmFarmer.Core.Messengers.Impl
 			var result = executor.Execute(getAzureVm, addAzureDataDisk, updateAzureVm);
 		}
 
-		private static void CopyVirtualHardDrive(IPowershellExecutor executor, string dataDiskName, string sourceVhdName, string vhdContainerName)
+		private static void CopyVirtualHardDrive(IPowershellExecutor executor, string sourceVhdName, string vhdContainerName, string dataDiskName)
 		{
 			var azureStorageBlobCopyCommand = new StartAzureStorageBlobCopyCommand
 			{
@@ -175,13 +179,13 @@ namespace AzureVmFarmer.Core.Messengers.Impl
 
 		}
 
-		private static void CreateDisk(IPowershellExecutor executor, string dataDiskName)
+		private static void CreateDisk(IPowershellExecutor executor, string storageAccountUrl, string vhdContainerName, string dataDiskName)
 		{
 			var addAzureDiskCommand = new AddAzureDiskCommand
 			{
 				DiskName = dataDiskName,
-				Label = "NuMatsDrive", //TODO: yup
-				MediaLocation = String.Format("http://numats.blob.core.windows.net/vhds/{0}.vhd", dataDiskName) //TODO: for serious
+				Label = dataDiskName,
+				MediaLocation = String.Format("{0}/{1}/{2}.vhd", storageAccountUrl, vhdContainerName, dataDiskName)
 			};
 
 			var results = executor.Execute(addAzureDiskCommand);

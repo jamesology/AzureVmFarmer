@@ -1,5 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Management.Automation;
 using System.Management.Automation.Runspaces;
 using AzureVmFarmer.Core.Commands;
 
@@ -7,15 +9,15 @@ namespace AzureVmFarmer.Core.PowershellCommandExecutor.Impl
 {
 	public class PowershellExecutor : IPowershellExecutor
 	{
-		public IEnumerable<object> Execute(params PowerShellCommand[] commands)
+		public IEnumerable<PSObject> Execute(params PowerShellCommand[] commands)
 		{
 			var result = Execute(null, commands);
 			return result;
 		}
 
-		public IEnumerable<object> Execute(IEnumerable input, params PowerShellCommand[] commands)
+		public IEnumerable<PSObject> Execute(IEnumerable input, params PowerShellCommand[] commands)
 		{
-			IEnumerable<object> result;
+			IEnumerable<PSObject> result;
 
 			using (var runspace = RunspaceFactory.CreateRunspace())
 			{
@@ -28,7 +30,7 @@ namespace AzureVmFarmer.Core.PowershellCommandExecutor.Impl
 						pipeline.Commands.Add(powerShellCommand);
 					}
 
-					result = pipeline.Execute(input);
+					result = pipeline.Execute(input).Cast<PSObject>();
 				}
 
 				runspace.Close();

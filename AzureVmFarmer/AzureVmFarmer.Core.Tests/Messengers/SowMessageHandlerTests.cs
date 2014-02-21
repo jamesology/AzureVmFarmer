@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Management.Automation;
 using AzureVmFarmer.Core.Commands;
 using AzureVmFarmer.Core.Messengers.Impl;
 using AzureVmFarmer.Core.PowershellCommandExecutor;
@@ -35,7 +36,7 @@ namespace AzureVmFarmer.Core.Tests.Messengers
 
 			var executor = MockRepository.GenerateStub<IPowershellExecutor>();
 			executor.Expect(x => x.Execute(Arg<PowerShellCommand[]>.Is.TypeOf))
-				.Return(new[] { new object() })
+				.Return(new[] { new PSObject() })
 				.Repeat.Once();
 
 			var messageHandler = new SowMessageHandler(executor);
@@ -54,7 +55,7 @@ namespace AzureVmFarmer.Core.Tests.Messengers
 
 			var executor = MockRepository.GenerateStub<IPowershellExecutor>();
 			executor.Expect(x => x.Execute(Arg<PowerShellCommand[]>.Is.TypeOf))
-				.Return(Enumerable.Empty<object>())
+				.Return(Enumerable.Empty<PSObject>())
 				.Repeat.Times(6);
 
 			var messageHandler = new SowMessageHandler(executor);

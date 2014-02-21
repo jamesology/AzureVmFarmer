@@ -1,4 +1,5 @@
 using System;
+using System.Management.Automation;
 using System.Management.Automation.Runspaces;
 
 namespace AzureVmFarmer.Core.Commands
@@ -13,13 +14,18 @@ namespace AzureVmFarmer.Core.Commands
 		private const string OutVariableParameter = "OutVariable";
 
 		public bool Debug { get; set; }
-		public ErrorAction ErrorAction { get; set; }
+		public ActionPreference ErrorAction { get; set; }
 		public string ErrorVariable { get; set; }
 		public bool ErrorVariableAppend { get; set; }
 		public int OutBuffer { get; set; }
 		public string OutVariable { get; set; }
 		public bool OutVariableAppend { get; set; }
 		public bool Verbose { get; set; }
+
+		protected PowerShellCommand()
+		{
+			ErrorAction = ActionPreference.Continue;
+		}
 
 		protected abstract Command BuildCommand();
 
@@ -37,7 +43,7 @@ namespace AzureVmFarmer.Core.Commands
 				result.Parameters.Add(VerboseParameter);
 			}
 
-			if (command.ErrorAction > ErrorAction.Continue)
+			if (command.ErrorAction != ActionPreference.Continue)
 			{
 				result.Parameters.Add(ErrorActionParameter, command.ErrorAction);
 			}

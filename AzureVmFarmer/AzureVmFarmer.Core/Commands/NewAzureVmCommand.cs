@@ -9,10 +9,12 @@ namespace AzureVmFarmer.Core.Commands
 		public const string LocationParameter = "Location";
 		public const string ServiceNameParameter = "ServiceName";
 		public const string WaitForBootParameter = "WaitForBoot";
+		public const string DeploymentNameParameter = "DeploymentName";
 
 		public string Location { get; set; }
 		public string ServiceName { get; set; }
 		public bool WaitForBoot { get; set; }
+		public string DeploymentName { get; set; }
 
 		protected override Command BuildCommand()
 		{
@@ -26,6 +28,11 @@ namespace AzureVmFarmer.Core.Commands
 			if (String.IsNullOrWhiteSpace(ServiceName) == false)
 			{
 				result.Parameters.Add(ServiceNameParameter, ServiceName);
+			}
+
+			if (String.IsNullOrWhiteSpace(DeploymentName) == false)
+			{
+				result.Parameters.Add(DeploymentNameParameter, DeploymentName);
 			}
 
 			if (WaitForBoot)

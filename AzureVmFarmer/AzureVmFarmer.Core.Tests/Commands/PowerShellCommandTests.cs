@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Management.Automation;
 using System.Management.Automation.Runspaces;
 using AzureVmFarmer.Core.Commands;
 using NUnit.Framework;
@@ -60,7 +61,7 @@ namespace AzureVmFarmer.Core.Tests.Commands
 		{
 			var expected = new PowerShellCommandTestHarness
 			{
-				ErrorAction = ErrorAction.Continue
+				ErrorAction = ActionPreference.Continue
 			};
 
 			Command actual = expected;
@@ -74,7 +75,7 @@ namespace AzureVmFarmer.Core.Tests.Commands
 		{
 			var expected = new PowerShellCommandTestHarness
 			{
-				ErrorAction = ErrorAction.Stop
+				ErrorAction = ActionPreference.Stop
 			};
 
 			Command actual = expected;

@@ -78,6 +78,35 @@ namespace AzureVmFarmer.Core.Tests.Commands
 		}
 
 		[Test]
+		public void CommandOperator_DeploymentNameIsEmpty_SetsNothing()
+		{
+			var expected = new NewAzureVmCommand
+			{
+				DeploymentName = String.Empty
+			};
+
+			Command command = expected;
+			var actual = command.Parameters.FirstOrDefault(x => x.Name == NewAzureVmCommand.DeploymentNameParameter);
+
+			Assert.That(actual, Is.Null);
+		}
+
+		[Test]
+		public void CommandOperator_DeploymentNameIsSomething_SetsDeploymentName()
+		{
+			var expected = new NewAzureVmCommand
+			{
+				DeploymentName = "SomeDeployment"
+			};
+
+			Command command = expected;
+			var actual = command.Parameters.FirstOrDefault(x => x.Name == NewAzureVmCommand.DeploymentNameParameter);
+
+			Assert.That(actual, Is.Not.Null);
+			Assert.That(actual.Value, Is.EqualTo(expected.DeploymentName));
+		}
+
+		[Test]
 		public void CommandOperator_WaitForBootIsFalse_SetsNothing()
 		{
 			var expected = new NewAzureVmCommand

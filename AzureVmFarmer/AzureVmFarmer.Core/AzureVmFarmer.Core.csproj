@@ -51,9 +51,9 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.Services.Client" />
-    <Reference Include="System.Management.Automation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <Private>True</Private>
-      <HintPath>..\packages\System.Management.Automation.6.1.7601.17515\lib\net45\System.Management.Automation.dll</HintPath>
+    <Reference Include="System.Management.Automation, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\System.Management.Automation\System.Management.Automation.dll</HintPath>
     </Reference>
     <Reference Include="System.Net" />
     <Reference Include="System.Runtime.Serialization" />
@@ -72,14 +72,19 @@
     <Compile Include="Commands\AddAzureDataDiskCommand.cs" />
     <Compile Include="Commands\AddAzureDiskCommand.cs" />
     <Compile Include="Commands\AddAzureProvisioningConfigCommand.cs" />
-    <Compile Include="Commands\ErrorAction.cs" />
+    <Compile Include="Commands\GetAzureDataDiskCommand.cs" />
+    <Compile Include="Commands\GetAzureDiskCommand.cs" />
+    <Compile Include="Commands\GetAzureOsDiskCommand.cs" />
     <Compile Include="Commands\GetAzureServiceCommand.cs" />
     <Compile Include="Commands\GetAzureStorageBlobCopyStateCommand.cs" />
     <Compile Include="Commands\GetAzureVmCommand.cs" />
     <Compile Include="Commands\NewAzureVmCommand.cs" />
     <Compile Include="Commands\NewAzureVmConfigCommand.cs" />
     <Compile Include="Commands\PowerShellCommand.cs" />
+    <Compile Include="Commands\RemoveAzureDataDiskCommand.cs" />
+    <Compile Include="Commands\RemoveAzureDiskCommand.cs" />
     <Compile Include="Commands\RemoveAzureServiceCommand.cs" />
+    <Compile Include="Commands\RemoveAzureVmCommand.cs" />
     <Compile Include="Commands\StartAzureStorageBlobCopyCommand.cs" />
     <Compile Include="Commands\UpdateAzureVmCommand.cs" />
     <Compile Include="CoreRegistry.cs" />

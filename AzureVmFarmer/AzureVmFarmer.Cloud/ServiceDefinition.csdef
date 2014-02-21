@@ -9,7 +9,9 @@
 			<Setting name="QueueName" />
 			<Setting name="VirtualMachineBaseImageName" />
 			<Setting name="DataDiskName" />
+			<Setting name="StorageContainerUrl" />
 			<Setting name="VhdContainerName" />
+			<Setting name="ServiceName" />
 		</ConfigurationSettings>
 	</WorkerRole>
 </ServiceDefinition>
